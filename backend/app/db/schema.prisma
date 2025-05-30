@@ -1,0 +1,200 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//ORDERS
+
+model Order {
+  id              String         @id @default(uuid())
+  userId          String
+  user            User           @relation(fields: [userId], references: [id])
+  orderedProducts OrderProduct[]
+  createdAt       DateTime       @default(now())
+
+  @@map("order")
+}
+
+model OrderProduct {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Decimal  @db.Decimal(10, 1)
+  createdAt DateTime @default(now())
+
+  @@map("order_product")
+}
+
+// SHOP
+
+enum WeekDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum UnitType {
+  G
+  KG
+  UNIT
+}
+
+enum ProductTypeCategory {
+  VEGETABLE
+  FRUIT
+  HERB
+  MEAT
+  DAIRY
+  BAKERY
+  BEVERAGE
+  FISH
+  SPICE
+  OTHER
+}
+
+model Shop {
+  id            String         @id @default(uuid())
+  userId        String         @unique
+  name          String
+  description   String?
+  banner        String?
+  city          String
+  county        String
+  street        String
+  latitude      Decimal        @db.Decimal(9, 6)
+  longitude     Decimal        @db.Decimal(9, 6)
+  workIntervals WorkInterval[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  user          User           @relation(fields: [userId], references: [id])
+  Product       Product[]
+
+  @@map("shop")
+}
+
+model WorkInterval {
+  id        String  @id @default(uuid())
+  shopId    String
+  day       WeekDay
+  startTime String
+  endTime   String
+  shop      Shop    @relation(fields: [shopId], references: [id])
+
+  @@unique([shopId, day])
+  @@map("work_interval")
+}
+
+model Product {
+  id              String         @id @default(uuid())
+  shopId          String
+  shop            Shop           @relation(fields: [shopId], references: [id])
+  productTypeId   String
+  productType     ProductType    @relation(fields: [productTypeId], references: [id])
+  price           Decimal        @db.Decimal(10, 2)
+  unitType        UnitType
+  stock           Decimal        @db.Decimal(10, 2)
+  city            String
+  county          String
+  street          String
+  latitude        Decimal        @db.Decimal(9, 6)
+  longitude       Decimal        @db.Decimal(9, 6)
+  orderedProducts OrderProduct[]
+  title           String
+  description     String?
+  image           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@map("product")
+}
+
+model ProductType {
+  id       String              @id @default(uuid())
+  name     String              @unique
+  category ProductTypeCategory
+
+  products Product[]
+
+  @@map("product_type")
+}
+
+// ACCOUNT
+
+enum Role {
+  BUYER
+  SELLER
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+  shop          Shop?
+  role          Role      @default(BUYER)
+  orders        Order[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
