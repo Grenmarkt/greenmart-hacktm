@@ -1,0 +1,28 @@
+{
+  "name": "monostack",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "private": "true",
+  "scripts": {
+    "setup": "npm i && cd backend && npx prisma generate",
+    "backend": "npm run dev -w backend",
+    "frontend": "npm run dev -w frontend",
+    "start": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "dependencies": {
+    "@tanstack/react-router": "^1.120.7",
+    "@tanstack/react-router-devtools": "^1.120.7"
+  }
+}
