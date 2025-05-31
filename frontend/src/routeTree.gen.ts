@@ -15,10 +15,14 @@ import { Route as SignupImport } from './routes/signup'
 import { Route as SigninImport } from './routes/signin'
 import { Route as SearchImport } from './routes/search'
 import { Route as ProtectedImport } from './routes/protected'
+import { Route as DashboardImport } from './routes/dashboard'
+import { Route as SellerDashboardImport } from './routes/SellerDashboard'
 import { Route as IndexImport } from './routes/index'
 import { Route as TestIndexImport } from './routes/test/index'
 import { Route as TestTestIdImport } from './routes/test/$testId'
 import { Route as ProductProductidImport } from './routes/product.$productid'
+import { Route as FarmfarmidImport } from './routes/farm.&farmid'
+import { Route as CategorycategoryidImport } from './routes/category.&categoryid'
 
 // Create/Update Routes
 
@@ -46,6 +50,18 @@ const ProtectedRoute = ProtectedImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const DashboardRoute = DashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SellerDashboardRoute = SellerDashboardImport.update({
+  id: '/SellerDashboard',
+  path: '/SellerDashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
@@ -70,6 +86,18 @@ const ProductProductidRoute = ProductProductidImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const FarmfarmidRoute = FarmfarmidImport.update({
+  id: '/farm/&farmid',
+  path: '/farm/&farmid',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CategorycategoryidRoute = CategorycategoryidImport.update({
+  id: '/category/&categoryid',
+  path: '/category/&categoryid',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -79,6 +107,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/SellerDashboard': {
+      id: '/SellerDashboard'
+      path: '/SellerDashboard'
+      fullPath: '/SellerDashboard'
+      preLoaderRoute: typeof SellerDashboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardImport
       parentRoute: typeof rootRoute
     }
     '/protected': {
@@ -109,6 +151,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
+    '/category/&categoryid': {
+      id: '/category/&categoryid'
+      path: '/category/&categoryid'
+      fullPath: '/category/&categoryid'
+      preLoaderRoute: typeof CategorycategoryidImport
+      parentRoute: typeof rootRoute
+    }
+    '/farm/&farmid': {
+      id: '/farm/&farmid'
+      path: '/farm/&farmid'
+      fullPath: '/farm/&farmid'
+      preLoaderRoute: typeof FarmfarmidImport
+      parentRoute: typeof rootRoute
+    }
     '/product/$productid': {
       id: '/product/$productid'
       path: '/product/$productid'
@@ -137,10 +193,14 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/SellerDashboard': typeof SellerDashboardRoute
+  '/dashboard': typeof DashboardRoute
   '/protected': typeof ProtectedRoute
   '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/category/&categoryid': typeof CategorycategoryidRoute
+  '/farm/&farmid': typeof FarmfarmidRoute
   '/product/$productid': typeof ProductProductidRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test': typeof TestIndexRoute
@@ -148,10 +208,14 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/SellerDashboard': typeof SellerDashboardRoute
+  '/dashboard': typeof DashboardRoute
   '/protected': typeof ProtectedRoute
   '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/category/&categoryid': typeof CategorycategoryidRoute
+  '/farm/&farmid': typeof FarmfarmidRoute
   '/product/$productid': typeof ProductProductidRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test': typeof TestIndexRoute
@@ -160,10 +224,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/SellerDashboard': typeof SellerDashboardRoute
+  '/dashboard': typeof DashboardRoute
   '/protected': typeof ProtectedRoute
   '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/category/&categoryid': typeof CategorycategoryidRoute
+  '/farm/&farmid': typeof FarmfarmidRoute
   '/product/$productid': typeof ProductProductidRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/': typeof TestIndexRoute
@@ -173,30 +241,42 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/SellerDashboard'
+    | '/dashboard'
     | '/protected'
     | '/search'
     | '/signin'
     | '/signup'
+    | '/category/&categoryid'
+    | '/farm/&farmid'
     | '/product/$productid'
     | '/test/$testId'
     | '/test'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/SellerDashboard'
+    | '/dashboard'
     | '/protected'
     | '/search'
     | '/signin'
     | '/signup'
+    | '/category/&categoryid'
+    | '/farm/&farmid'
     | '/product/$productid'
     | '/test/$testId'
     | '/test'
   id:
     | '__root__'
     | '/'
+    | '/SellerDashboard'
+    | '/dashboard'
     | '/protected'
     | '/search'
     | '/signin'
     | '/signup'
+    | '/category/&categoryid'
+    | '/farm/&farmid'
     | '/product/$productid'
     | '/test/$testId'
     | '/test/'
@@ -205,10 +285,14 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SellerDashboardRoute: typeof SellerDashboardRoute
+  DashboardRoute: typeof DashboardRoute
   ProtectedRoute: typeof ProtectedRoute
   SearchRoute: typeof SearchRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  CategorycategoryidRoute: typeof CategorycategoryidRoute
+  FarmfarmidRoute: typeof FarmfarmidRoute
   ProductProductidRoute: typeof ProductProductidRoute
   TestTestIdRoute: typeof TestTestIdRoute
   TestIndexRoute: typeof TestIndexRoute
@@ -216,10 +300,14 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SellerDashboardRoute: SellerDashboardRoute,
+  DashboardRoute: DashboardRoute,
   ProtectedRoute: ProtectedRoute,
   SearchRoute: SearchRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  CategorycategoryidRoute: CategorycategoryidRoute,
+  FarmfarmidRoute: FarmfarmidRoute,
   ProductProductidRoute: ProductProductidRoute,
   TestTestIdRoute: TestTestIdRoute,
   TestIndexRoute: TestIndexRoute,
@@ -236,10 +324,14 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/SellerDashboard",
+        "/dashboard",
         "/protected",
         "/search",
         "/signin",
         "/signup",
+        "/category/&categoryid",
+        "/farm/&farmid",
         "/product/$productid",
         "/test/$testId",
         "/test/"
@@ -247,6 +339,12 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/SellerDashboard": {
+      "filePath": "SellerDashboard.tsx"
+    },
+    "/dashboard": {
+      "filePath": "dashboard.tsx"
     },
     "/protected": {
       "filePath": "protected.tsx"
@@ -259,6 +357,12 @@ export const routeTree = rootRoute
     },
     "/signup": {
       "filePath": "signup.tsx"
+    },
+    "/category/&categoryid": {
+      "filePath": "category.&categoryid.tsx"
+    },
+    "/farm/&farmid": {
+      "filePath": "farm.&farmid.tsx"
     },
     "/product/$productid": {
       "filePath": "product.$productid.tsx"
