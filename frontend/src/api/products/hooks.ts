@@ -14,8 +14,8 @@ type CreateProductData = {
 
 export function useCreateProduct() {
   return useMutation({
-    mutationKey: ['product', 'create'] as const,
+    mutationKey: ['products', 'create'] as const,
     mutationFn: (createProductData: CreateProductData) =>
-      $fetch('@post/api/products', { body: createProductData }),
+      $fetch('@post/api/shop/products', { body: createProductData }),
   });
 }

@@ -5,7 +5,7 @@ import {
 import { createFileRoute } from '@tanstack/react-router';
 import { uploadFiles } from '@/lib/fileUpload/client';
 import { toast } from 'sonner';
-import { useCreateProduct } from '@/api/product/hooks';
+import { useCreateProduct } from '@/api/products/hooks';
 export const Route = createFileRoute('/create-product')({
   component: RouteComponent,
 });
