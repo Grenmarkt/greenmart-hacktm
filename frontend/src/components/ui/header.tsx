@@ -3,7 +3,7 @@ import { Menu } from "lucide-react";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+ //
   return (
     <nav className="bg-white shadow-md px-4 py-3">
       <div className="max-w-7xl mx-auto flex flex-col min-[900px]:flex-row min-[900px]:items-center min-[900px]:justify-between gap-4">
