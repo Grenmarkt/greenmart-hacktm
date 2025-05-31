@@ -16,6 +16,7 @@ import { Route as SigninImport } from './routes/signin'
 import { Route as SearchImport } from './routes/search'
 import { Route as ProtectedImport } from './routes/protected'
 import { Route as DashboardImport } from './routes/dashboard'
+import { Route as CartPageImport } from './routes/cartPage'
 import { Route as SellerDashboardImport } from './routes/SellerDashboard'
 import { Route as IndexImport } from './routes/index'
 import { Route as TestIndexImport } from './routes/test/index'
@@ -53,6 +54,12 @@ const ProtectedRoute = ProtectedImport.update({
 const DashboardRoute = DashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CartPageRoute = CartPageImport.update({
+  id: '/cartPage',
+  path: '/cartPage',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -114,6 +121,13 @@ declare module '@tanstack/react-router' {
       path: '/SellerDashboard'
       fullPath: '/SellerDashboard'
       preLoaderRoute: typeof SellerDashboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/cartPage': {
+      id: '/cartPage'
+      path: '/cartPage'
+      fullPath: '/cartPage'
+      preLoaderRoute: typeof CartPageImport
       parentRoute: typeof rootRoute
     }
     '/dashboard': {
@@ -194,6 +208,7 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/SellerDashboard': typeof SellerDashboardRoute
+  '/cartPage': typeof CartPageRoute
   '/dashboard': typeof DashboardRoute
   '/protected': typeof ProtectedRoute
   '/search': typeof SearchRoute
@@ -209,6 +224,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/SellerDashboard': typeof SellerDashboardRoute
+  '/cartPage': typeof CartPageRoute
   '/dashboard': typeof DashboardRoute
   '/protected': typeof ProtectedRoute
   '/search': typeof SearchRoute
@@ -225,6 +241,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/SellerDashboard': typeof SellerDashboardRoute
+  '/cartPage': typeof CartPageRoute
   '/dashboard': typeof DashboardRoute
   '/protected': typeof ProtectedRoute
   '/search': typeof SearchRoute
@@ -242,6 +259,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/SellerDashboard'
+    | '/cartPage'
     | '/dashboard'
     | '/protected'
     | '/search'
@@ -256,6 +274,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/SellerDashboard'
+    | '/cartPage'
     | '/dashboard'
     | '/protected'
     | '/search'
@@ -270,6 +289,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/SellerDashboard'
+    | '/cartPage'
     | '/dashboard'
     | '/protected'
     | '/search'
@@ -286,6 +306,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SellerDashboardRoute: typeof SellerDashboardRoute
+  CartPageRoute: typeof CartPageRoute
   DashboardRoute: typeof DashboardRoute
   ProtectedRoute: typeof ProtectedRoute
   SearchRoute: typeof SearchRoute
@@ -301,6 +322,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SellerDashboardRoute: SellerDashboardRoute,
+  CartPageRoute: CartPageRoute,
   DashboardRoute: DashboardRoute,
   ProtectedRoute: ProtectedRoute,
   SearchRoute: SearchRoute,
@@ -325,6 +347,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/SellerDashboard",
+        "/cartPage",
         "/dashboard",
         "/protected",
         "/search",
@@ -342,6 +365,9 @@ export const routeTree = rootRoute
     },
     "/SellerDashboard": {
       "filePath": "SellerDashboard.tsx"
+    },
+    "/cartPage": {
+      "filePath": "cartPage.tsx"
     },
     "/dashboard": {
       "filePath": "dashboard.tsx"

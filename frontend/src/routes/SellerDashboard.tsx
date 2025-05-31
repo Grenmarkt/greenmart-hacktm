@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Star, Plus, Edit, MapPin, Clock, Camera, Trash2, X, Navigation, Loader2 } from 'lucide-react';
 import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { toast } from 'sonner';
 
 // Configure Mapbox
@@ -118,7 +119,6 @@ const initialReviews: Review[] = [
   },
 ];
 
-// Component ProductCard
 const ProductCard = ({ product, onEdit, onDelete }: { product: Product; onEdit: (product: Product) => void; onDelete: (productId: number) => void }) => {
   const getCategoryLabel = (category: string): string => {
     const categoryMap: Record<string, string> = {
@@ -186,7 +186,6 @@ const ProductCard = ({ product, onEdit, onDelete }: { product: Product; onEdit: 
   );
 };
 
-// Component ProductList
 const ProductList = ({ products, onEdit, onDelete }: { products: Product[]; onEdit: (product: Product) => void; onDelete: (productId: number) => void }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -297,39 +296,7 @@ const SellerDashboard = () => {
     'miere_si_gemuri', 'muraturi', 'cereale', 'carne'
   ];
 
-  // Initialize map
-  useEffect(() => {
-    if (map.current || !mapContainer.current) return;
-
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [profileEdit.lng ? parseFloat(profileEdit.lng) : 21.2272, profileEdit.lat ? parseFloat(profileEdit.lat) : 45.7494],
-      zoom: profileEdit.lat && profileEdit.lng ? 15 : 6
-    });
-
-    map.current.on('load', () => {
-      setMapLoaded(true);
-      
-      if (profileEdit.lat && profileEdit.lng) {
-        addMarker(parseFloat(profileEdit.lng), parseFloat(profileEdit.lat));
-      }
-    });
-
-    map.current.on('click', (e) => {
-      const { lng, lat } = e.lngLat;
-      updateLocation(lng, lat);
-      reverseGeocode(lng, lat);
-    });
-
-    return () => {
-      if (map.current) {
-        map.current.remove();
-      }
-    };
-  }, []);
-
-  // Add or update marker
+  // Map functions
   const addMarker = (lng: number, lat: number) => {
     if (marker.current) {
       marker.current.remove();
@@ -340,7 +307,6 @@ const SellerDashboard = () => {
       .addTo(map.current!);
   };
 
-  // Update location in state
   const updateLocation = (lng: number, lat: number) => {
     setProfileEdit({
       ...profileEdit,
@@ -350,7 +316,6 @@ const SellerDashboard = () => {
     addMarker(lng, lat);
   };
 
-  // Reverse geocoding to get address
   const reverseGeocode = async (lng: number, lat: number) => {
     try {
       const response = await fetch(
@@ -374,7 +339,6 @@ const SellerDashboard = () => {
     }
   };
 
-  // Get current location from browser
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
       toast.error("Geolocation nu este suportat de acest browser.");
@@ -424,7 +388,6 @@ const SellerDashboard = () => {
     );
   };
 
-  // Search location by address
   const searchLocation = async () => {
     if (!profileEdit.address.trim()) {
       toast.warning('Introdu o adresă pentru căutare');
@@ -457,6 +420,50 @@ const SellerDashboard = () => {
     }
   };
 
+  // Initialize map
+  useEffect(() => {
+    if (!mapContainer.current) return;
+
+    if (!map.current) {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [parseFloat(profileEdit.lng), parseFloat(profileEdit.lat)],
+        zoom: 15
+      });
+
+      map.current.on('load', () => {
+        setMapLoaded(true);
+        addMarker(parseFloat(profileEdit.lng), parseFloat(profileEdit.lat));
+      });
+
+      map.current.on('click', (e) => {
+        const { lng, lat } = e.lngLat;
+        updateLocation(lng, lat);
+        reverseGeocode(lng, lat);
+      });
+    }
+
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, []);
+
+  // Update map when location changes
+  useEffect(() => {
+    if (map.current && mapLoaded && profileEdit.lat && profileEdit.lng) {
+      map.current.flyTo({
+        center: [parseFloat(profileEdit.lng), parseFloat(profileEdit.lat)],
+        zoom: 15
+      });
+      addMarker(parseFloat(profileEdit.lng), parseFloat(profileEdit.lat));
+    }
+  }, [profileEdit.lat, profileEdit.lng, mapLoaded]);
+
+  // Product functions
   const handleAddProduct = () => {
     if (!newProduct.name || !newProduct.price || !newProduct.category || !newProduct.description) {
       toast.warning('Completează toate câmpurile obligatorii');
@@ -517,6 +524,7 @@ const SellerDashboard = () => {
     toast.success('Produsul a fost șters!');
   };
 
+  // Profile functions
   const updateSellerProfile = () => {
     setSellerProfile({
       ...sellerProfile,
@@ -565,13 +573,11 @@ const SellerDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
           <p className="text-gray-600">Gestionează produsele și profilul tau</p>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
@@ -604,7 +610,6 @@ const SellerDashboard = () => {
           </Card>
         </div>
 
-        {/* Main Content */}
         <Tabs defaultValue="products" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="products">Produse</TabsTrigger>
@@ -612,7 +617,6 @@ const SellerDashboard = () => {
             <TabsTrigger value="profile">Profil Fermă</TabsTrigger>
           </TabsList>
 
-          {/* Products Tab */}
           <TabsContent value="products" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">Produsele Tale</h2>
@@ -723,7 +727,6 @@ const SellerDashboard = () => {
               onDelete={handleDeleteProduct}
             />
 
-            {/* Edit Product Dialog */}
             <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
               <DialogContent className="max-w-md">
                 <DialogHeader>
@@ -772,7 +775,6 @@ const SellerDashboard = () => {
             </Dialog>
           </TabsContent>
 
-          {/* Reviews Tab */}
           <TabsContent value="reviews" className="space-y-6">
             <h2 className="text-2xl font-bold">Review-uri Primite</h2>
             <div className="grid gap-4">
@@ -782,12 +784,10 @@ const SellerDashboard = () => {
             </div>
           </TabsContent>
 
-          {/* Profile Tab */}
           <TabsContent value="profile" className="space-y-6">
             <h2 className="text-2xl font-bold">Profil Fermă</h2>
             
             <div className="grid gap-6">
-              {/* Description */}
               <Card>
                 <CardHeader>
                   <CardTitle>Descrierea Fermei</CardTitle>
@@ -806,7 +806,6 @@ const SellerDashboard = () => {
                 </CardContent>
               </Card>
 
-              {/* Location */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -819,7 +818,7 @@ const SellerDashboard = () => {
                     <Label>Selectează locația pe hartă</Label>
                     <div 
                       ref={mapContainer} 
-                      className="w-full h-64 rounded-lg border"
+                      className="w-full h-64 rounded-lg border overflow-hidden"
                       style={{ minHeight: '300px' }}
                     />
                     <p className="text-sm text-muted-foreground">
@@ -870,7 +869,7 @@ const SellerDashboard = () => {
                         <Label>Latitudine</Label>
                         <Input
                           type="number"
-                          step="0.0001"
+                          step="0.000001"
                           value={profileEdit.lat}
                           onChange={(e) => 
                             setProfileEdit({...profileEdit, lat: e.target.value})}
@@ -880,7 +879,7 @@ const SellerDashboard = () => {
                         <Label>Longitudine</Label>
                         <Input
                           type="number"
-                          step="0.0001"
+                          step="0.000001"
                           value={profileEdit.lng}
                           onChange={(e) => 
                             setProfileEdit({...profileEdit, lng: e.target.value})}
@@ -895,7 +894,6 @@ const SellerDashboard = () => {
                 </CardContent>
               </Card>
 
-              {/* Working Hours */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -928,7 +926,6 @@ const SellerDashboard = () => {
                 </CardContent>
               </Card>
 
-              {/* Gallery */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">

@@ -8,7 +8,6 @@ import { MapPin, Loader2, Navigation } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Setează token-ul Mapbox (înlocuiește cu token-ul tău)
-mapboxgl.accessToken = 'pk.eyJ1IjoidGFnZXN0dWRpbyIsImEiOiJjbTlrM3o5eXUwaWVjMmtzZ3ltcDAwazR6In0.tLphe6RSpLB4jbjdYuBg4g';
 
 interface LocationPickerProps {
   profileEdit: {
@@ -37,8 +36,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [profileEdit.lng ? parseFloat(profileEdit.lng) : 21.2287, profileEdit.lat ? parseFloat(profileEdit.lat) : 45.7494], // Centrat pe România
+      center: [profileEdit.lng ? parseFloat(profileEdit.lng) : 21.2287, profileEdit.lat ? parseFloat(profileEdit.lat) : 45.7494], 
       zoom: profileEdit.lat && profileEdit.lng ? 15 : 6
     });
 
@@ -88,6 +86,8 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
   // Reverse geocoding pentru a obține adresa
   const reverseGeocode = async (lng: number, lat: number) => {
+        mapboxgl.accessToken = 'pk.eyJ1IjoidGFnZXN0dWRpbyIsImEiOiJjbTlrM3o5eXUwaWVjMmtzZ3ltcDAwazR6In0.tLphe6RSpLB4jbjdYuBg4g';
+
     try {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}&language=ro`
@@ -110,6 +110,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
   // Obține locația curentă din browser
   const getCurrentLocation = () => {
+        mapboxgl.accessToken = 'pk.eyJ1IjoidGFnZXN0dWRpbyIsImEiOiJjbTlrM3o5eXUwaWVjMmtzZ3ltcDAwazR6In0.tLphe6RSpLB4jbjdYuBg4g';
     if (!navigator.geolocation) {
       toast.error("Geolocation nu este suportat de acest browser.");
       return;
