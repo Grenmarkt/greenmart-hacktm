@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { becomeSeller } from './becomeSeller.handlers.ts';
-import { authHandler } from '../../../middleware/authHandlers.ts';
+import { authHandler, sellerHandler } from '../../../middleware/authHandlers.ts';
 
 const router = Router();
 
 router
-    .use(authHandler)
+    .use(authHandler,sellerHandler)
     .route('/')
     .post(becomeSeller);
 
