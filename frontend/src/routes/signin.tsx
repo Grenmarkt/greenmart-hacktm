@@ -1,5 +1,5 @@
 import { useSignin } from '@/api/auth/hooks';
-import { Button } from '@/components/ui/button';
+import { SignInForm } from '@/components/SignInForm';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/signin')({
@@ -13,19 +13,16 @@ export const Route = createFileRoute('/signin')({
 
 function RouteComponent() {
   const mutation = useSignin();
+  const onFormSubmit = (email: string, password: string) => {
+    mutation.mutate({
+      email: email,
+      password: password,
+    });
+  };
 
   return (
-    <div>
-      <Button
-        onClick={() =>
-          mutation.mutate({
-            email: 'someEmail@gmail.com',
-            password: 'pass123456',
-          })
-        }>
-        Sign in
-      </Button>
-      {mutation.isError && 'UPSIE'}
+    <div className='flex min-h-screen w-full items-center justify-center'>
+      <SignInForm onSubmit={onFormSubmit}></SignInForm>
     </div>
   );
 }

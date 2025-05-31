@@ -4,6 +4,8 @@ import { auth } from '@/lib/auth/client';
 import { queryClient } from '../client';
 import { router } from '@/lib/router';
 
+import { toast } from 'sonner';
+
 type SignupData = {
   name: string;
   email: string;
@@ -44,6 +46,11 @@ export function useSignin() {
         exact: true,
       });
       router.navigate({ to: '/protected' });
+    },
+    onError: () => {
+      toast.error('Autentificare eșuată', {
+        description: 'Emailul sau parola sunt greșite',
+      });
     },
   });
 }
