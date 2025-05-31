@@ -1,42 +1,39 @@
 import { prismaClient } from "../../../db/prismaClient.ts";
-import type { OrderLocals } from "../../../middleware/authHandlers.ts";
+import type { AuthLocals} from "../../../middleware/authHandlers.ts";
 import type { placeOrder } from "./createOrders.validators.ts";
 import type { Request, Response } from "express";
 
 export const createOrder = async (
     req: Request<unknown, unknown, placeOrder>,
-    res: Response<unknown, OrderLocals>,
+    res: Response<unknown, AuthLocals>,
 ) => {
     const data: placeOrder = req.body;
-    const { order } = res.locals;
+    const { user } = res.locals;
 
-    const orderProducts = await prismaClient.order.findFirst({
+    let order = await prismaClient.order.findFirst({
         where: {
-            id: order.id,
-            
+            userId: user.id,
+            status: "PENDING",
         }
-    })
+    });
 
-    const usersWithoutOrders = await prismaClient.user.findMany({
-        where: {
-            orders: {
-                none: {},
-            },
+    if (!order) {
+        order = await prismaClient.order.create({
+            data: {
+                userId: user.id,
+                status: "PENDING",
+            }
+        });
+    }
+
+    const orderProduct = await prismaClient.orderProduct.create({
+        data: {
+            orderId: order.id,
+            productId: data.productId,
+            quantity: data.quantity,
         },
     });
 
-    const createdOrders = await Promise.all(
-        usersWithoutOrders.map(async (user) => {
-            return await prismaClient.order.create({
-                data: {
-                    userId: user.id,
-                },
-            });
-        })
-    );
-
-
-
-   res.status(201).json(createdOrders);
-}
+    res.status(201).json(orderProduct);
+};
 
