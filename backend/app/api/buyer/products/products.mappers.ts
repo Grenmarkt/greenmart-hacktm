@@ -3,7 +3,7 @@ import type { Prisma } from '@prisma/client';
 
 export function buildProductsQuery(filter: ProductsFilter) {
   const where: Prisma.ProductWhereInput = {
-    ...(filter.category && { productType: { category: filter.category } }),
+    ...(filter.name && { productType: { name: filter.name } }),
   };
 
   const orderBy: Prisma.Enumerable<Prisma.ProductOrderByWithRelationInput> = {};
