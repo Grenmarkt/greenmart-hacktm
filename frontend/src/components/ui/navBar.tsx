@@ -44,7 +44,7 @@ const Navbar = () => {
             </button>
           </div>
         </div>
-
+{/*ok*/}
         <div className="hidden max-[1199px]:min-[900px]:block w-full">
           <SearchBar />
         </div>
