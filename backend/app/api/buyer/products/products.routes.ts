@@ -1,12 +1,19 @@
 import { Router } from 'express';
-import { getProduct } from './products.handlers.ts';
+import { getProduct, getProducts } from './products.handlers.ts';
 import { createInputValidator } from '../../../middleware/inputValidator.ts';
-import { getProductInputSchema } from './products.validators.ts';
+import {
+  filterProductsSchema,
+  getProductInputSchema,
+} from './products.validators.ts';
 
 const router = Router();
 
 router
   .route('/')
+  .get(createInputValidator(filterProductsSchema, 'body'), getProducts);
+
+router
+  .route('/:productId')
   .get(createInputValidator(getProductInputSchema, 'params'), getProduct);
 
 export { router as productsRouter };
