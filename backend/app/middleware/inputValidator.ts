@@ -10,6 +10,9 @@ export const createInputValidator =
   ): RequestHandler =>
   (req: Request, _res: Response, next: NextFunction) => {
     const parsedInput = schema.parse(req[requestInputChannel] ?? {});
-    req[requestInputChannel] = parsedInput;
+    if (requestInputChannel === 'body') {
+      req[requestInputChannel] = parsedInput;
+    }
+
     next();
   };

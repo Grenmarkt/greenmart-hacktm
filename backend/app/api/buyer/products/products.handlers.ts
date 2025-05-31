@@ -17,6 +17,7 @@ export const getProduct = async (req: Request, res: Response) => {
     },
     include: {
       productType: true,
+      shop: true,
     },
   });
 
@@ -34,6 +35,9 @@ export const getProducts = async (req: Request, res: Response) => {
 
   const prismaQuery = buildProductsQuery(filter);
 
-  const products = await prismaClient.product.findMany(prismaQuery);
+  const products = await prismaClient.product.findMany({
+    ...prismaQuery,
+    include: { productType: true, shop: true },
+  });
   res.status(200).json(products);
 };

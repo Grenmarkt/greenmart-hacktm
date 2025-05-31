@@ -210,7 +210,7 @@ function RouteComponent() {
         <div>
           <h1 className='mb-2 text-3xl font-bold'>{product.title}</h1>
           <p className='mb-4 text-gray-600'>
-            De la <span className='font-medium'>NUME FARM</span>
+            De la <span className='font-medium'>{product.shop!.name}</span>
           </p>
 
           <StarRating />
@@ -292,7 +292,9 @@ function RouteComponent() {
               </div>
               <div className='rounded bg-gray-50 p-4'>
                 <span className='text-gray-500'>Fermă:</span>
-                <span className='float-right font-medium'>NUME FIRMA</span>
+                <span className='float-right font-medium'>
+                  {product.shop!.name}
+                </span>
               </div>
               <div className='rounded bg-gray-50 p-4'>
                 <span className='text-gray-500'>Locatie:</span>
@@ -312,15 +314,10 @@ function RouteComponent() {
       </div>
 
       <div className='mt-10 border-t border-gray-200 pt-6'>
-        <h3 className='mb-4 text-lg font-semibold'>Despre NUME FARM</h3>
-        <p className='mb-4 text-gray-700'>
-          DESCRIERE FIRMA Lorem ipsum dolor, sit amet consectetur adipisicing
-          elit. Ipsum aspernatur optio praesentium magnam exercitationem libero
-          ex hic amet itaque provident aperiam sapiente non quos, eum recusandae
-          voluptatum. Quam harum modi magnam eligendi explicabo quo atque
-          distinctio tempora non officiis eos voluptas praesentium, quos ratione
-          aut quia iusto pariatur rerum veritatis.
-        </p>
+        <h3 className='mb-4 text-lg font-semibold'>
+          Despre {product.shop!.name}
+        </h3>
+        <p className='mb-4 text-gray-700'>{product.shop!.description}</p>
         <Link to='/' className='text-primary hover:underline'>
           Află mai multe despre NUME FARM
         </Link>

@@ -10,7 +10,7 @@ const router = Router();
 
 router
   .route('/')
-  .get(createInputValidator(filterProductsSchema, 'body'), getProducts);
+  .get(createInputValidator(filterProductsSchema, 'query'), getProducts);
 
 router
   .route('/:productId')

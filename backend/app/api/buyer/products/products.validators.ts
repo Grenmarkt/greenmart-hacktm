@@ -2,7 +2,8 @@ import { ProductTypeCategory } from '@prisma/client';
 import { z } from 'zod/v4';
 
 export const filterProductsSchema = z.strictObject({
-  name: z.string().min(3).max(50).optional(),
+  productType: z.string().optional(),
+  city: z.string().optional(),
   category: z.enum(ProductTypeCategory).optional(),
   orderBy: z.enum(['price', 'stock', 'createdAt']).optional(),
   orderDir: z.enum(['asc', 'desc']).optional(),

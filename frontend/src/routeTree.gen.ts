@@ -17,6 +17,7 @@ import { Route as ProtectedImport } from './routes/protected'
 import { Route as CreateProductImport } from './routes/create-product'
 import { Route as IndexImport } from './routes/index'
 import { Route as TestIndexImport } from './routes/test/index'
+import { Route as SellerIndexImport } from './routes/seller/index'
 import { Route as ProductsIndexImport } from './routes/products/index'
 import { Route as TestTestIdImport } from './routes/test/$testId'
 import { Route as ProductsProductIdImport } from './routes/products/$productId'
@@ -56,6 +57,12 @@ const IndexRoute = IndexImport.update({
 const TestIndexRoute = TestIndexImport.update({
   id: '/test/',
   path: '/test/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SellerIndexRoute = SellerIndexImport.update({
+  id: '/seller/',
+  path: '/seller/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -137,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/seller/': {
+      id: '/seller/'
+      path: '/seller'
+      fullPath: '/seller'
+      preLoaderRoute: typeof SellerIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/test/': {
       id: '/test/'
       path: '/test'
@@ -158,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/products/$productId': typeof ProductsProductIdRoute
   '/test/$testId': typeof TestTestIdRoute
   '/products': typeof ProductsIndexRoute
+  '/seller': typeof SellerIndexRoute
   '/test': typeof TestIndexRoute
 }
 
@@ -170,6 +185,7 @@ export interface FileRoutesByTo {
   '/products/$productId': typeof ProductsProductIdRoute
   '/test/$testId': typeof TestTestIdRoute
   '/products': typeof ProductsIndexRoute
+  '/seller': typeof SellerIndexRoute
   '/test': typeof TestIndexRoute
 }
 
@@ -183,6 +199,7 @@ export interface FileRoutesById {
   '/products/$productId': typeof ProductsProductIdRoute
   '/test/$testId': typeof TestTestIdRoute
   '/products/': typeof ProductsIndexRoute
+  '/seller/': typeof SellerIndexRoute
   '/test/': typeof TestIndexRoute
 }
 
@@ -197,6 +214,7 @@ export interface FileRouteTypes {
     | '/products/$productId'
     | '/test/$testId'
     | '/products'
+    | '/seller'
     | '/test'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -208,6 +226,7 @@ export interface FileRouteTypes {
     | '/products/$productId'
     | '/test/$testId'
     | '/products'
+    | '/seller'
     | '/test'
   id:
     | '__root__'
@@ -219,6 +238,7 @@ export interface FileRouteTypes {
     | '/products/$productId'
     | '/test/$testId'
     | '/products/'
+    | '/seller/'
     | '/test/'
   fileRoutesById: FileRoutesById
 }
@@ -232,6 +252,7 @@ export interface RootRouteChildren {
   ProductsProductIdRoute: typeof ProductsProductIdRoute
   TestTestIdRoute: typeof TestTestIdRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
+  SellerIndexRoute: typeof SellerIndexRoute
   TestIndexRoute: typeof TestIndexRoute
 }
 
@@ -244,6 +265,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsProductIdRoute: ProductsProductIdRoute,
   TestTestIdRoute: TestTestIdRoute,
   ProductsIndexRoute: ProductsIndexRoute,
+  SellerIndexRoute: SellerIndexRoute,
   TestIndexRoute: TestIndexRoute,
 }
 
@@ -265,6 +287,7 @@ export const routeTree = rootRoute
         "/products/$productId",
         "/test/$testId",
         "/products/",
+        "/seller/",
         "/test/"
       ]
     },
@@ -291,6 +314,9 @@ export const routeTree = rootRoute
     },
     "/products/": {
       "filePath": "products/index.tsx"
+    },
+    "/seller/": {
+      "filePath": "seller/index.tsx"
     },
     "/test/": {
       "filePath": "test/index.tsx"
