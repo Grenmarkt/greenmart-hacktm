@@ -7,18 +7,19 @@ export const createProductSchema = z.strictObject({
   description: z
     .string()
     .max(500, { message: 'Description must be under 500 characters' })
-    .default(""),
-  image: z.string().optional(),
+    .default(''),
+  imageUrl: z.string().optional(),
+  imageId: z.string().optional(),
   price: z.number().positive(),
   unitType: z.enum(UnitType),
   stock: z.number().positive(),
-  city: z.string().default(""),
-  county: z.string().default(""),
-  street: z.string().default(""),
-  latitude: z.number().min(-90).max(90),
-  longitude: z.number().min(-180).max(180),
+  city: z.string().optional(),
+  county: z.string().optional(),
+  street: z.string().optional(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 });
-  
+
 export const filterProductsSchema = z.strictObject({
   category: z.enum(ProductTypeCategory).optional(),
   orderBy: z.enum(['price', 'stock', 'createdAt']).optional(),

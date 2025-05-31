@@ -112,7 +112,8 @@ model Product {
   orderedProducts OrderProduct[]
   title           String
   description     String?
-  image           String?
+  imageUrl        String?
+  imageId         String?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
