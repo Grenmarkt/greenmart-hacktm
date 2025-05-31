@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,12 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Star, Plus, Edit, MapPin, Clock, Camera, Trash2, X } from 'lucide-react';
+import { Star, Plus, Edit, MapPin, Clock, Camera, Trash2, X, Navigation, Loader2 } from 'lucide-react';
+import mapboxgl from 'mapbox-gl';
+import { toast } from 'sonner';
+
+// Configure Mapbox
+mapboxgl.accessToken = 'pk.eyJ1IjoidGFnZXN0dWRpbyIsImEiOiJjbTlrM3o5eXUwaWVjMmtzZ3ltcDAwazR6In0.tLphe6RSpLB4jbjdYuBg4g';
 
 // Types
 interface Product {
@@ -237,6 +242,13 @@ const SellerDashboard = () => {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductEdit | null>(null);
   
+  // Refs for map
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const marker = useRef<mapboxgl.Marker | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
+
   // Seller profile state
   const [sellerProfile, setSellerProfile] = useState<SellerProfile>({
     description: 'Fermă specializată în produse organice și naturale de calitate superioară. Oferim produse proaspete, crescute cu grijă și pasiune.',
@@ -285,26 +297,191 @@ const SellerDashboard = () => {
     'miere_si_gemuri', 'muraturi', 'cereale', 'carne'
   ];
 
-  const handleAddProduct = () => {
-    if (newProduct.name && newProduct.price && newProduct.category && newProduct.description) {
-      const product: Product = {
-        id: Math.max(...products.map(p => p.id), 0) + 1,
-        ...newProduct,
-        price: parseFloat(newProduct.price),
-        rating: 0,
-        reviewCount: 0,
-        location: {
-          lat: newProduct.location.lat,
-          lng: newProduct.location.lng
-        }
-      };
-      setProducts([...products, product]);
-      setNewProduct({
-        name: '', description: '', price: '', category: '', farmName: '', 
-        imageUrl: '', location: { lat: 45.7494, lng: 21.2272 }
-      });
-      setIsAddingProduct(false);
+  // Initialize map
+  useEffect(() => {
+    if (map.current || !mapContainer.current) return;
+
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [profileEdit.lng ? parseFloat(profileEdit.lng) : 21.2272, profileEdit.lat ? parseFloat(profileEdit.lat) : 45.7494],
+      zoom: profileEdit.lat && profileEdit.lng ? 15 : 6
+    });
+
+    map.current.on('load', () => {
+      setMapLoaded(true);
+      
+      if (profileEdit.lat && profileEdit.lng) {
+        addMarker(parseFloat(profileEdit.lng), parseFloat(profileEdit.lat));
+      }
+    });
+
+    map.current.on('click', (e) => {
+      const { lng, lat } = e.lngLat;
+      updateLocation(lng, lat);
+      reverseGeocode(lng, lat);
+    });
+
+    return () => {
+      if (map.current) {
+        map.current.remove();
+      }
+    };
+  }, []);
+
+  // Add or update marker
+  const addMarker = (lng: number, lat: number) => {
+    if (marker.current) {
+      marker.current.remove();
     }
+
+    marker.current = new mapboxgl.Marker({ color: '#ef4444' })
+      .setLngLat([lng, lat])
+      .addTo(map.current!);
+  };
+
+  // Update location in state
+  const updateLocation = (lng: number, lat: number) => {
+    setProfileEdit({
+      ...profileEdit,
+      lat: lat.toFixed(6),
+      lng: lng.toFixed(6)
+    });
+    addMarker(lng, lat);
+  };
+
+  // Reverse geocoding to get address
+  const reverseGeocode = async (lng: number, lat: number) => {
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}&language=ro`
+      );
+      const data = await response.json();
+      
+      if (data.features && data.features.length > 0) {
+        const address = data.features[0].place_name;
+        setProfileEdit({
+          ...profileEdit,
+          address: address,
+          lat: lat.toFixed(6),
+          lng: lng.toFixed(6)
+        });
+        toast.success('Adresa a fost actualizată automat');
+      }
+    } catch (error) {
+      console.error('Eroare la reverse geocoding:', error);
+      toast.error('Eroare la obținerea adresei');
+    }
+  };
+
+  // Get current location from browser
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation nu este suportat de acest browser.");
+      return;
+    }
+
+    setIsLoadingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        if (map.current) {
+          map.current.flyTo({
+            center: [longitude, latitude],
+            zoom: 15
+          });
+        }
+
+        updateLocation(longitude, latitude);
+        reverseGeocode(longitude, latitude);
+        setIsLoadingLocation(false);
+      },
+      (error) => {
+        setIsLoadingLocation(false);
+        let errorMessage = "Nu s-a putut obține locația.";
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Accesul la locație a fost refuzat.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Informațiile despre locație nu sunt disponibile.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Cererea pentru locație a expirat.";
+            break;
+        }
+
+        toast.error(errorMessage);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000
+      }
+    );
+  };
+
+  // Search location by address
+  const searchLocation = async () => {
+    if (!profileEdit.address.trim()) {
+      toast.warning('Introdu o adresă pentru căutare');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(profileEdit.address)}.json?access_token=${mapboxgl.accessToken}&country=RO&language=ro`
+      );
+      const data = await response.json();
+
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center;
+        
+        if (map.current) {
+          map.current.flyTo({
+            center: [lng, lat],
+            zoom: 15
+          });
+        }
+
+        updateLocation(lng, lat);
+      } else {
+        toast.error("Nu s-a găsit nicio locație pentru această adresă.");
+      }
+    } catch (error) {
+      console.error('Eroare la căutarea locației:', error);
+      toast.error("Eroare la căutarea locației");
+    }
+  };
+
+  const handleAddProduct = () => {
+    if (!newProduct.name || !newProduct.price || !newProduct.category || !newProduct.description) {
+      toast.warning('Completează toate câmpurile obligatorii');
+      return;
+    }
+
+    const product: Product = {
+      id: Math.max(...products.map(p => p.id), 0) + 1,
+      ...newProduct,
+      price: parseFloat(newProduct.price),
+      rating: 0,
+      reviewCount: 0,
+      location: {
+        lat: parseFloat(profileEdit.lat),
+        lng: parseFloat(profileEdit.lng)
+      }
+    };
+    
+    setProducts([...products, product]);
+    setNewProduct({
+      name: '', description: '', price: '', category: '', farmName: '', 
+      imageUrl: '', location: { lat: 45.7494, lng: 21.2272 }
+    });
+    setIsAddingProduct(false);
+    toast.success('Produsul a fost adăugat cu succes!');
   };
 
   const handleEditProduct = (product: Product) => {
@@ -315,23 +492,29 @@ const SellerDashboard = () => {
   };
 
   const handleUpdateProduct = () => {
-    if (editingProduct) {
-      const updatedProduct: Product = {
-        ...editingProduct,
-        price: typeof editingProduct.price === 'string' 
-          ? parseFloat(editingProduct.price) 
-          : editingProduct.price
-      };
-      
-      setProducts(products.map(p => 
-        p.id === updatedProduct.id ? updatedProduct : p
-      ));
-      setEditingProduct(null);
-    }
+    if (!editingProduct) return;
+
+    const updatedProduct: Product = {
+      ...editingProduct,
+      price: typeof editingProduct.price === 'string' 
+        ? parseFloat(editingProduct.price) 
+        : editingProduct.price,
+      location: {
+        lat: parseFloat(profileEdit.lat),
+        lng: parseFloat(profileEdit.lng)
+      }
+    };
+    
+    setProducts(products.map(p => 
+      p.id === updatedProduct.id ? updatedProduct : p
+    ));
+    setEditingProduct(null);
+    toast.success('Produsul a fost actualizat cu succes!');
   };
 
   const handleDeleteProduct = (productId: number) => {
     setProducts(products.filter(p => p.id !== productId));
+    toast.success('Produsul a fost șters!');
   };
 
   const updateSellerProfile = () => {
@@ -345,14 +528,23 @@ const SellerDashboard = () => {
       },
       workingHours: { ...profileEdit.workingHours }
     });
+    toast.success('Profilul a fost actualizat cu succes!');
   };
 
   const addImageToGallery = (imageUrl: string) => {
-    if (imageUrl && !sellerProfile.gallery.includes(imageUrl)) {
+    if (!imageUrl) {
+      toast.warning('Introdu un URL valid pentru imagine');
+      return;
+    }
+
+    if (!sellerProfile.gallery.includes(imageUrl)) {
       setSellerProfile({
         ...sellerProfile,
         gallery: [...sellerProfile.gallery, imageUrl]
       });
+      toast.success('Imaginea a fost adăugată în galerie!');
+    } else {
+      toast.warning('Această imagine există deja în galerie');
     }
   };
 
@@ -361,6 +553,7 @@ const SellerDashboard = () => {
       ...sellerProfile,
       gallery: sellerProfile.gallery.filter(img => img !== imageUrl)
     });
+    toast.success('Imaginea a fost eliminată din galerie!');
   };
 
   const totalProducts = products.length;
@@ -439,7 +632,7 @@ const SellerDashboard = () => {
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="name">Nume Produs</Label>
+                      <Label htmlFor="name">Nume Produs*</Label>
                       <Input
                         id="name"
                         value={newProduct.name}
@@ -450,7 +643,7 @@ const SellerDashboard = () => {
                     </div>
                     
                     <div className="grid gap-2">
-                      <Label htmlFor="description">Descriere</Label>
+                      <Label htmlFor="description">Descriere*</Label>
                       <Textarea
                         id="description"
                         value={newProduct.description}
@@ -463,7 +656,7 @@ const SellerDashboard = () => {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="price">Preț (RON)</Label>
+                        <Label htmlFor="price">Preț (RON)*</Label>
                         <Input
                           id="price"
                           type="number"
@@ -476,7 +669,7 @@ const SellerDashboard = () => {
                       </div>
                       
                       <div className="grid gap-2">
-                        <Label htmlFor="category">Categorie</Label>
+                        <Label htmlFor="category">Categorie*</Label>
                         <select
                           id="category"
                           value={newProduct.category}
@@ -531,7 +724,7 @@ const SellerDashboard = () => {
             />
 
             {/* Edit Product Dialog */}
-            <Dialog open={!!editingProduct} onOpenChange={(open: boolean) => !open && setEditingProduct(null)}>
+            <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
               <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle>Editează Produs</DialogTitle>
@@ -622,6 +815,41 @@ const SellerDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Selectează locația pe hartă</Label>
+                    <div 
+                      ref={mapContainer} 
+                      className="w-full h-64 rounded-lg border"
+                      style={{ minHeight: '300px' }}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Apasă pe hartă pentru a selecta locația sau folosește butoanele de mai jos.
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={getCurrentLocation}
+                      disabled={isLoadingLocation}
+                      className="flex items-center gap-2"
+                    >
+                      {isLoadingLocation ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Navigation className="w-4 h-4" />
+                      )}
+                      Locația Mea
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={searchLocation}
+                      disabled={!profileEdit.address.trim()}
+                    >
+                      Caută Adresa
+                    </Button>
+                  </div>
+
                   <div className="grid gap-4">
                     <div className="grid gap-2">
                       <Label>Adresa</Label>
@@ -630,6 +858,11 @@ const SellerDashboard = () => {
                         onChange={(e) => 
                           setProfileEdit({...profileEdit, address: e.target.value})}
                         placeholder="ex. Timișoara, Timiș"
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            searchLocation();
+                          }
+                        }}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -655,7 +888,8 @@ const SellerDashboard = () => {
                       </div>
                     </div>
                   </div>
-                  <Button onClick={updateSellerProfile}>
+
+                  <Button onClick={updateSellerProfile} className="w-full">
                     Salvează Locația
                   </Button>
                 </CardContent>
@@ -725,7 +959,7 @@ const SellerDashboard = () => {
                   <div className="flex gap-2">
                     <Input
                       placeholder="URL imagine nouă..."
-                      onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                      onKeyPress={(e) => {
                         if (e.key === 'Enter') {
                           const target = e.target as HTMLInputElement;
                           addImageToGallery(target.value);
@@ -734,9 +968,8 @@ const SellerDashboard = () => {
                       }}
                     />
                     <Button
-                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                        const button = e.currentTarget;
-                        const input = button.parentElement?.querySelector('input') as HTMLInputElement;
+                      onClick={() => {
+                        const input = document.querySelector('input[placeholder="URL imagine nouă..."]') as HTMLInputElement;
                         if (input) {
                           addImageToGallery(input.value);
                           input.value = '';
@@ -756,11 +989,6 @@ const SellerDashboard = () => {
   );
 };
 
-// TanStack Router route configuration
 export const Route = createFileRoute('/SellerDashboard')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  return <SellerDashboard />
-}
+  component: SellerDashboard
+});
