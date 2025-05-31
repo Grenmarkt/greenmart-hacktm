@@ -13,10 +13,12 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as SignupImport } from './routes/signup'
 import { Route as SigninImport } from './routes/signin'
+import { Route as SearchImport } from './routes/search'
 import { Route as ProtectedImport } from './routes/protected'
 import { Route as IndexImport } from './routes/index'
 import { Route as TestIndexImport } from './routes/test/index'
 import { Route as TestTestIdImport } from './routes/test/$testId'
+import { Route as ProductProductidImport } from './routes/product.$productid'
 
 // Create/Update Routes
 
@@ -29,6 +31,12 @@ const SignupRoute = SignupImport.update({
 const SigninRoute = SigninImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SearchRoute = SearchImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -56,6 +64,12 @@ const TestTestIdRoute = TestTestIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ProductProductidRoute = ProductProductidImport.update({
+  id: '/product/$productid',
+  path: '/product/$productid',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -74,6 +88,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedImport
       parentRoute: typeof rootRoute
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchImport
+      parentRoute: typeof rootRoute
+    }
     '/signin': {
       id: '/signin'
       path: '/signin'
@@ -86,6 +107,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupImport
+      parentRoute: typeof rootRoute
+    }
+    '/product/$productid': {
+      id: '/product/$productid'
+      path: '/product/$productid'
+      fullPath: '/product/$productid'
+      preLoaderRoute: typeof ProductProductidImport
       parentRoute: typeof rootRoute
     }
     '/test/$testId': {
@@ -110,8 +138,10 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/protected': typeof ProtectedRoute
+  '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/product/$productid': typeof ProductProductidRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test': typeof TestIndexRoute
 }
@@ -119,8 +149,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/protected': typeof ProtectedRoute
+  '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/product/$productid': typeof ProductProductidRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test': typeof TestIndexRoute
 }
@@ -129,8 +161,10 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/protected': typeof ProtectedRoute
+  '/search': typeof SearchRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/product/$productid': typeof ProductProductidRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/': typeof TestIndexRoute
 }
@@ -140,18 +174,30 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/protected'
+    | '/search'
     | '/signin'
     | '/signup'
+    | '/product/$productid'
     | '/test/$testId'
     | '/test'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/protected' | '/signin' | '/signup' | '/test/$testId' | '/test'
+  to:
+    | '/'
+    | '/protected'
+    | '/search'
+    | '/signin'
+    | '/signup'
+    | '/product/$productid'
+    | '/test/$testId'
+    | '/test'
   id:
     | '__root__'
     | '/'
     | '/protected'
+    | '/search'
     | '/signin'
     | '/signup'
+    | '/product/$productid'
     | '/test/$testId'
     | '/test/'
   fileRoutesById: FileRoutesById
@@ -160,8 +206,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRoute: typeof ProtectedRoute
+  SearchRoute: typeof SearchRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  ProductProductidRoute: typeof ProductProductidRoute
   TestTestIdRoute: typeof TestTestIdRoute
   TestIndexRoute: typeof TestIndexRoute
 }
@@ -169,8 +217,10 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRoute: ProtectedRoute,
+  SearchRoute: SearchRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  ProductProductidRoute: ProductProductidRoute,
   TestTestIdRoute: TestTestIdRoute,
   TestIndexRoute: TestIndexRoute,
 }
@@ -187,8 +237,10 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/protected",
+        "/search",
         "/signin",
         "/signup",
+        "/product/$productid",
         "/test/$testId",
         "/test/"
       ]
@@ -199,11 +251,17 @@ export const routeTree = rootRoute
     "/protected": {
       "filePath": "protected.tsx"
     },
+    "/search": {
+      "filePath": "search.tsx"
+    },
     "/signin": {
       "filePath": "signin.tsx"
     },
     "/signup": {
       "filePath": "signup.tsx"
+    },
+    "/product/$productid": {
+      "filePath": "product.$productid.tsx"
     },
     "/test/$testId": {
       "filePath": "test/$testId.tsx"

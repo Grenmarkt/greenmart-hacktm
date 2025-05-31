@@ -20,5 +20,10 @@
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "dependencies": {
+    "@tanstack/react-query": "^5.79.0",
+    "@tanstack/react-router": "^1.120.13",
+    "mapbox-gl": "^3.12.0"
+  }
 }
