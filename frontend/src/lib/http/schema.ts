@@ -12,5 +12,5 @@ export const schema = createSchema({
     query: getProductsInputSchema,
     output: z.array(productOutputSchema),
   },
-  '@get/api/buyer/products/:productId': {},
+  '@get/api/buyer/products/:productId': { output: productOutputSchema },
 });

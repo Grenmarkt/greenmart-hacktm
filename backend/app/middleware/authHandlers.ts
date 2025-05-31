@@ -1,7 +1,7 @@
 import { fromNodeHeaders } from 'better-auth/node';
 import { auth, type Auth } from '../utils/auth.ts';
 import type { Request, Response, NextFunction } from 'express';
-import { Role, type Shop } from '@prisma/client';
+import { Role, type Order, type Shop } from '@prisma/client';
 import { AppError } from '../utils/appError.ts';
 import { prismaClient } from '../db/prismaClient.ts';
 
@@ -12,6 +12,11 @@ export interface AuthLocals {
 export interface ShopLocals {
   user: NonNullable<Auth['user']>;
   shop: Shop;
+}
+
+export interface OrderLocals {
+  user: NonNullable<Auth['user']>;
+  order: Order;
 }
 
 export const authHandler = async (

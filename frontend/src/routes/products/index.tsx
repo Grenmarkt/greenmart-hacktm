@@ -39,16 +39,32 @@ const mockProductTypes = [
   { id: 'sucuri_si_bauturi_alcoolice', name: 'Sucuri și Băuturi Alcoolice' },
 ];
 
+type ProductSearch = {
+  productType: string;
+  city: string;
+};
+
 export const Route = createFileRoute('/products/')({
-  loader: ({ context }) =>
+  validateSearch: (search: Record<string, unknown>): ProductSearch => {
+    // validate and parse the search params into a typed state
+    return {
+      productType: (search['productType'] as string) ?? 'Toate',
+      city: (search['city'] as string) ?? 'Toate',
+    };
+  },
+  loaderDeps: ({ search: { productType, city } }) => ({ productType, city }),
+  loader: ({ context, deps }) =>
     // Prefetch “Toate” on initial load
-    context.queryClient.ensureQueryData(createProductsQuery('Toate')),
+    context.queryClient.ensureQueryData(
+      createProductsQuery(deps.productType, deps.city),
+    ),
   component: RouteComponent,
 });
 
 function RouteComponent() {
   // 2️⃣ Manage state: selectedType (string) and whether the popover is open
-  const [selectedType, setSelectedType] = useState<string>('Toate');
+  const { productType, city } = Route.useSearch();
+  const [selectedType, setSelectedType] = useState<string>(productType);
   const [open, setOpen] = useState<boolean>(false);
 
   // 3️⃣ Fire a React Query for products every time `selectedType` changes
@@ -57,7 +73,7 @@ function RouteComponent() {
     isLoading,
     isError,
     error,
-  } = useQuery(createProductsQuery(selectedType));
+  } = useQuery(createProductsQuery(selectedType, city));
 
   // 4️⃣ Track which product is hovered (for the Map highlight)
   const [hoveredProduct, setHoveredProduct] = useState<Record<
@@ -74,7 +90,8 @@ function RouteComponent() {
         {/* ────────────────────────────
            Shadcn Command‐style Combobox
            ──────────────────────────── */}
-        <div className='mb-6'>
+        <div className='mb-6 space-y-3'>
+          <h1 className='text-xl font-bold'>Cauta un produs</h1>
           <Popover open={open} onOpenChange={setOpen}>
             {/* 1. The button that shows the currently selected type */}
             <PopoverTrigger asChild>
@@ -82,7 +99,7 @@ function RouteComponent() {
                 variant='outline'
                 role='combobox'
                 aria-expanded={open}
-                className='w-[200px] justify-between'>
+                className='w-full justify-between'>
                 {mockProductTypes.find((t) => t.id === selectedType)?.name ||
                   'Selectează tip produs'}
                 <ChevronsUpDown className='opacity-50' />
@@ -153,7 +170,7 @@ function RouteComponent() {
       {/* —————————————————————————————
           Right Pane: Map
          ————————————————————————————— */}
-      <div className='relative w-1/3'>
+      <div className='relative w-3/4'>
         <Map products={products} hoveredProduct={hoveredProduct as any} />
       </div>
     </div>

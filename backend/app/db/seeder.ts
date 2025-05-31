@@ -114,6 +114,25 @@ async function main() {
     },
   });
 
+  // Create reviews for the shop
+  await prismaClient.review.createMany({
+    data: [
+      {
+        id: crypto.randomUUID(),
+        shopId: shop.id,
+        userId: buyer.id,
+        rating: 5,
+        comment: 'Great selection of organic products!',
+      },
+      {
+        id: crypto.randomUUID(),
+        shopId: shop.id,
+        userId: buyer.id,
+        rating: 4,
+        comment: 'Very fresh produce, will buy again.',
+      }]
+})
+
   // Create products
   const products = await Promise.all([
     prismaClient.product.create({

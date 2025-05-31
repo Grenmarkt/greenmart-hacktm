@@ -13,15 +13,18 @@ export function createProductQuery(productId: string) {
   });
 }
 
-export function createProductsQuery(productType: string) {
+export function createProductsQuery(productType: string, city: string) {
   return queryOptions({
-    queryKey: ['products', productType] as const,
+    queryKey: ['products', productType, city] as const,
     queryFn: async ({ signal }) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const fetchOptions: any = { query: {}, signal };
 
       if (productType !== 'Toate') {
-        fetchOptions.query = { productType };
+        fetchOptions.query.productType = productType;
+      }
+      if (city !== 'Toate') {
+        fetchOptions.query.city = city;
       }
 
       const data = await $fetch('@get/api/buyer/products', fetchOptions);

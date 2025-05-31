@@ -13,10 +13,11 @@ export const createProductInputSchema = z.object({
 
 export const getProductsInputSchema = z.object({
   productType: z.string().optional(),
-  // TODO
+  city: z.string().optional(),
 });
 
 export type GetProductsInput = z.infer<typeof getProductsInputSchema>;
+export type Product = z.infer<typeof productOutputSchema>;
 
 export const productOutputSchema = z.object({
   id: z.string(),
@@ -27,7 +28,13 @@ export const productOutputSchema = z.object({
   price: z.coerce.number(), // If this should be a number, use z.coerce.number()
   stock: z.coerce.number(), // Same here, you can coerce if needed
   unitType: z.string(),
-  productType: z.object({ name: z.string() }),
+  productType: z.object({ name: z.string(), category: z.string() }),
+  shop: z
+    .object({
+      name: z.string(),
+      description: z.string().optional(),
+    })
+    .optional(),
   shopId: z.string(),
   city: z.string(),
   county: z.string(),
