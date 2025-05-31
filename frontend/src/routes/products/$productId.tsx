@@ -17,7 +17,7 @@ function RouteComponent() {
   return (
     <div>
       Hello "/posts/$productId"!
-      <p>{JSON.stringify(product, null, 2)}</p>
+      <p>{JSON.stringify(product.data, null, 2)}</p>
     </div>
   );
 }
