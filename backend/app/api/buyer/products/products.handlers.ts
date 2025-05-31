@@ -15,6 +15,9 @@ export const getProduct = async (req: Request, res: Response) => {
     where: {
       id: params.productId,
     },
+    include: {
+      productType: true,
+    },
   });
 
   if (!product) {
