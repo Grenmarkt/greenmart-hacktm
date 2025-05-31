@@ -1,12 +1,11 @@
 import { Router } from 'express';
-import { createProduct, getProducts } from './products.handlers.ts';
+import { getProducts } from './products.handlers.ts';
 
 
 const router = Router();
 
 router
   .route('/')
-  .get(getProducts)
-  .post(createProduct);
+  .get(getProducts);
 
 export { router as productsRouter };
