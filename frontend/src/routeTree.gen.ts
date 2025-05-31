@@ -16,6 +16,7 @@ import { Route as SigninImport } from './routes/signin'
 import { Route as SearchImport } from './routes/search'
 import { Route as ProtectedImport } from './routes/protected'
 import { Route as DashboardImport } from './routes/dashboard'
+import { Route as CheckOutImport } from './routes/checkOut'
 import { Route as CartPageImport } from './routes/cartPage'
 import { Route as SellerDashboardImport } from './routes/SellerDashboard'
 import { Route as IndexImport } from './routes/index'
@@ -54,6 +55,12 @@ const ProtectedRoute = ProtectedImport.update({
 const DashboardRoute = DashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CheckOutRoute = CheckOutImport.update({
+  id: '/checkOut',
+  path: '/checkOut',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -128,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/cartPage'
       fullPath: '/cartPage'
       preLoaderRoute: typeof CartPageImport
+      parentRoute: typeof rootRoute
+    }
+    '/checkOut': {
+      id: '/checkOut'
+      path: '/checkOut'
+      fullPath: '/checkOut'
+      preLoaderRoute: typeof CheckOutImport
       parentRoute: typeof rootRoute
     }
     '/dashboard': {
@@ -209,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/SellerDashboard': typeof SellerDashboardRoute
   '/cartPage': typeof CartPageRoute
+  '/checkOut': typeof CheckOutRoute
   '/dashboard': typeof DashboardRoute
   '/protected': typeof ProtectedRoute
   '/search': typeof SearchRoute
@@ -225,6 +240,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/SellerDashboard': typeof SellerDashboardRoute
   '/cartPage': typeof CartPageRoute
+  '/checkOut': typeof CheckOutRoute
   '/dashboard': typeof DashboardRoute
   '/protected': typeof ProtectedRoute
   '/search': typeof SearchRoute
@@ -242,6 +258,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/SellerDashboard': typeof SellerDashboardRoute
   '/cartPage': typeof CartPageRoute
+  '/checkOut': typeof CheckOutRoute
   '/dashboard': typeof DashboardRoute
   '/protected': typeof ProtectedRoute
   '/search': typeof SearchRoute
@@ -260,6 +277,7 @@ export interface FileRouteTypes {
     | '/'
     | '/SellerDashboard'
     | '/cartPage'
+    | '/checkOut'
     | '/dashboard'
     | '/protected'
     | '/search'
@@ -275,6 +293,7 @@ export interface FileRouteTypes {
     | '/'
     | '/SellerDashboard'
     | '/cartPage'
+    | '/checkOut'
     | '/dashboard'
     | '/protected'
     | '/search'
@@ -290,6 +309,7 @@ export interface FileRouteTypes {
     | '/'
     | '/SellerDashboard'
     | '/cartPage'
+    | '/checkOut'
     | '/dashboard'
     | '/protected'
     | '/search'
@@ -307,6 +327,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SellerDashboardRoute: typeof SellerDashboardRoute
   CartPageRoute: typeof CartPageRoute
+  CheckOutRoute: typeof CheckOutRoute
   DashboardRoute: typeof DashboardRoute
   ProtectedRoute: typeof ProtectedRoute
   SearchRoute: typeof SearchRoute
@@ -323,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SellerDashboardRoute: SellerDashboardRoute,
   CartPageRoute: CartPageRoute,
+  CheckOutRoute: CheckOutRoute,
   DashboardRoute: DashboardRoute,
   ProtectedRoute: ProtectedRoute,
   SearchRoute: SearchRoute,
@@ -348,6 +370,7 @@ export const routeTree = rootRoute
         "/",
         "/SellerDashboard",
         "/cartPage",
+        "/checkOut",
         "/dashboard",
         "/protected",
         "/search",
@@ -368,6 +391,9 @@ export const routeTree = rootRoute
     },
     "/cartPage": {
       "filePath": "cartPage.tsx"
+    },
+    "/checkOut": {
+      "filePath": "checkOut.tsx"
     },
     "/dashboard": {
       "filePath": "dashboard.tsx"
