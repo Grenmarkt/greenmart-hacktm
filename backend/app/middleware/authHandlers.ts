@@ -31,6 +31,18 @@ export const authHandler = async (
   next();
 };
 
+export const sellerHandler = async (
+  _req: Request,
+  res: Response<unknown, AuthLocals>,
+  next: NextFunction,
+) => {
+  const { user } = res.locals;
+  if (user.role == Role.SELLER) {
+    throw AppError.forbidden('Access denied. You are alr a seller');
+  }
+  next();
+}
+
 export const shopHandler = async (
   _req: Request,
   res: Response<unknown, ShopLocals>,

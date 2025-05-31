@@ -68,8 +68,8 @@ export type ProductUploadFormInput = z.infer<typeof formSchema>;
 
 const fruits = [
   {
-    label: 'mere',
-    value: 'mere',
+    label: 'Organic Tomato',
+    value: 'Organic Tomato',
   },
   {
     label: 'cartofi',

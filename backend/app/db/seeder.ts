@@ -102,6 +102,7 @@ async function main() {
       street: '123 Market St',
       latitude: new Decimal(37.7749),
       longitude: new Decimal(-122.4194),
+      phone: "0742220931",
       workIntervals: {
         create: Object.values(WeekDay).map((day) => ({
           id: crypto.randomUUID(),
