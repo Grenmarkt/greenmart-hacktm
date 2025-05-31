@@ -14,9 +14,12 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as SignupImport } from './routes/signup'
 import { Route as SigninImport } from './routes/signin'
 import { Route as ProtectedImport } from './routes/protected'
+import { Route as CreateProductImport } from './routes/create-product'
 import { Route as IndexImport } from './routes/index'
 import { Route as TestIndexImport } from './routes/test/index'
+import { Route as ProductsIndexImport } from './routes/products/index'
 import { Route as TestTestIdImport } from './routes/test/$testId'
+import { Route as ProductsProductIdImport } from './routes/products/$productId'
 
 // Create/Update Routes
 
@@ -38,6 +41,12 @@ const ProtectedRoute = ProtectedImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CreateProductRoute = CreateProductImport.update({
+  id: '/create-product',
+  path: '/create-product',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
@@ -50,9 +59,21 @@ const TestIndexRoute = TestIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ProductsIndexRoute = ProductsIndexImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const TestTestIdRoute = TestTestIdImport.update({
   id: '/test/$testId',
   path: '/test/$testId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ProductsProductIdRoute = ProductsProductIdImport.update({
+  id: '/products/$productId',
+  path: '/products/$productId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -65,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/create-product': {
+      id: '/create-product'
+      path: '/create-product'
+      fullPath: '/create-product'
+      preLoaderRoute: typeof CreateProductImport
       parentRoute: typeof rootRoute
     }
     '/protected': {
@@ -88,11 +116,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
+    '/products/$productId': {
+      id: '/products/$productId'
+      path: '/products/$productId'
+      fullPath: '/products/$productId'
+      preLoaderRoute: typeof ProductsProductIdImport
+      parentRoute: typeof rootRoute
+    }
     '/test/$testId': {
       id: '/test/$testId'
       path: '/test/$testId'
       fullPath: '/test/$testId'
       preLoaderRoute: typeof TestTestIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/products/': {
+      id: '/products/'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsIndexImport
       parentRoute: typeof rootRoute
     }
     '/test/': {
@@ -109,29 +151,38 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/create-product': typeof CreateProductRoute
   '/protected': typeof ProtectedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/products/$productId': typeof ProductsProductIdRoute
   '/test/$testId': typeof TestTestIdRoute
+  '/products': typeof ProductsIndexRoute
   '/test': typeof TestIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/create-product': typeof CreateProductRoute
   '/protected': typeof ProtectedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/products/$productId': typeof ProductsProductIdRoute
   '/test/$testId': typeof TestTestIdRoute
+  '/products': typeof ProductsIndexRoute
   '/test': typeof TestIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/create-product': typeof CreateProductRoute
   '/protected': typeof ProtectedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/products/$productId': typeof ProductsProductIdRoute
   '/test/$testId': typeof TestTestIdRoute
+  '/products/': typeof ProductsIndexRoute
   '/test/': typeof TestIndexRoute
 }
 
@@ -139,39 +190,60 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/create-product'
     | '/protected'
     | '/signin'
     | '/signup'
+    | '/products/$productId'
     | '/test/$testId'
+    | '/products'
     | '/test'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/protected' | '/signin' | '/signup' | '/test/$testId' | '/test'
+  to:
+    | '/'
+    | '/create-product'
+    | '/protected'
+    | '/signin'
+    | '/signup'
+    | '/products/$productId'
+    | '/test/$testId'
+    | '/products'
+    | '/test'
   id:
     | '__root__'
     | '/'
+    | '/create-product'
     | '/protected'
     | '/signin'
     | '/signup'
+    | '/products/$productId'
     | '/test/$testId'
+    | '/products/'
     | '/test/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CreateProductRoute: typeof CreateProductRoute
   ProtectedRoute: typeof ProtectedRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  ProductsProductIdRoute: typeof ProductsProductIdRoute
   TestTestIdRoute: typeof TestTestIdRoute
+  ProductsIndexRoute: typeof ProductsIndexRoute
   TestIndexRoute: typeof TestIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CreateProductRoute: CreateProductRoute,
   ProtectedRoute: ProtectedRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  ProductsProductIdRoute: ProductsProductIdRoute,
   TestTestIdRoute: TestTestIdRoute,
+  ProductsIndexRoute: ProductsIndexRoute,
   TestIndexRoute: TestIndexRoute,
 }
 
@@ -186,15 +258,21 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/create-product",
         "/protected",
         "/signin",
         "/signup",
+        "/products/$productId",
         "/test/$testId",
+        "/products/",
         "/test/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/create-product": {
+      "filePath": "create-product.tsx"
     },
     "/protected": {
       "filePath": "protected.tsx"
@@ -205,8 +283,14 @@ export const routeTree = rootRoute
     "/signup": {
       "filePath": "signup.tsx"
     },
+    "/products/$productId": {
+      "filePath": "products/$productId.tsx"
+    },
     "/test/$testId": {
       "filePath": "test/$testId.tsx"
+    },
+    "/products/": {
+      "filePath": "products/index.tsx"
     },
     "/test/": {
       "filePath": "test/index.tsx"

@@ -102,6 +102,7 @@ async function main() {
       street: '123 Market St',
       latitude: new Decimal(37.7749),
       longitude: new Decimal(-122.4194),
+      phone: "0742220931",
       workIntervals: {
         create: Object.values(WeekDay).map((day) => ({
           id: crypto.randomUUID(),
@@ -112,6 +113,25 @@ async function main() {
       },
     },
   });
+
+  // Create reviews for the shop
+  await prismaClient.review.createMany({
+    data: [
+      {
+        id: crypto.randomUUID(),
+        shopId: shop.id,
+        userId: buyer.id,
+        rating: 5,
+        comment: 'Great selection of organic products!',
+      },
+      {
+        id: crypto.randomUUID(),
+        shopId: shop.id,
+        userId: buyer.id,
+        rating: 4,
+        comment: 'Very fresh produce, will buy again.',
+      }]
+})
 
   // Create products
   const products = await Promise.all([

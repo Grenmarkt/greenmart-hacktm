@@ -1,9 +1,7 @@
-import { z } from 'zod/v4';
 import { createSchema } from '@better-fetch/fetch';
-import { postInputSchema, postOutputSchema } from './models/posts';
+import { createProductInputSchema } from './models/products';
 
 export const schema = createSchema({
-  '@get/api/posts': { output: z.array(postOutputSchema) },
-  '@get/api/posts/:id': { output: postOutputSchema },
-  '@post/api/posts': { input: postInputSchema, output: postOutputSchema },
+  '@post/api/shop/products': { input: createProductInputSchema },
+  '@get/api/buyer/products/:productId': {},
 });

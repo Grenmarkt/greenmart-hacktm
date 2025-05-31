@@ -10,9 +10,16 @@ datasource db {
 
 //ORDERS
 
+enum OrderStatus {
+  CREATED
+  PENDING
+  COMPLETED
+}
+
 model Order {
   id              String         @id @default(uuid())
   userId          String
+  status          OrderStatus    @default(CREATED)
   user            User           @relation(fields: [userId], references: [id])
   orderedProducts OrderProduct[]
   createdAt       DateTime       @default(now())
@@ -75,12 +82,27 @@ model Shop {
   latitude      Decimal        @db.Decimal(9, 6)
   longitude     Decimal        @db.Decimal(9, 6)
   workIntervals WorkInterval[]
+  review        Review[]
+  phone         String
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   user          User           @relation(fields: [userId], references: [id])
   Product       Product[]
 
   @@map("shop")
+}
+
+model Review{
+  id        String   @id @default(uuid())
+  shopId    String
+  shop      Shop     @relation(fields: [shopId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rating    Int      @default(0)
+  comment   String?
+  createdAt DateTime @default(now())
+
+  @@map("review")
 }
 
 model WorkInterval {
@@ -112,7 +134,8 @@ model Product {
   orderedProducts OrderProduct[]
   title           String
   description     String?
-  image           String?
+  imageUrl        String?
+  imageId         String?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
@@ -123,7 +146,6 @@ model ProductType {
   id       String              @id @default(uuid())
   name     String              @unique
   category ProductTypeCategory
-
   products Product[]
 
   @@map("product_type")
@@ -136,23 +158,24 @@ enum Role {
   SELLER
 }
 
-model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
-  shop          Shop?
-  role          Role      @default(BUYER)
-  orders        Order[]
+  model User {
+    id            String    @id
+    name          String
+    email         String
+    emailVerified Boolean
+    image         String?
+    createdAt     DateTime
+    updatedAt     DateTime
+    sessions      Session[]
+    review        Review[]
+    accounts      Account[]
+    shop          Shop?
+    role          Role      @default(BUYER)
+    orders        Order[]
 
-  @@unique([email])
-  @@map("user")
-}
+    @@unique([email])
+    @@map("user")
+  }
 
 model Session {
   id        String   @id

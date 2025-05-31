@@ -1,7 +1,7 @@
 import { fromNodeHeaders } from 'better-auth/node';
 import { auth, type Auth } from '../utils/auth.ts';
 import type { Request, Response, NextFunction } from 'express';
-import { Role, type Shop } from '@prisma/client';
+import { Role, type Order, type Shop } from '@prisma/client';
 import { AppError } from '../utils/appError.ts';
 import { prismaClient } from '../db/prismaClient.ts';
 
@@ -12,6 +12,11 @@ export interface AuthLocals {
 export interface ShopLocals {
   user: NonNullable<Auth['user']>;
   shop: Shop;
+}
+
+export interface OrderLocals {
+  user: NonNullable<Auth['user']>;
+  order: Order;
 }
 
 export const authHandler = async (
@@ -30,6 +35,18 @@ export const authHandler = async (
   res.locals['user'] = session.user;
   next();
 };
+
+export const sellerHandler = async (
+  _req: Request,
+  res: Response<unknown, AuthLocals>,
+  next: NextFunction,
+) => {
+  const { user } = res.locals;
+  if (user.role == Role.SELLER) {
+    throw AppError.forbidden('Access denied. You are alr a seller');
+  }
+  next();
+}
 
 export const shopHandler = async (
   _req: Request,

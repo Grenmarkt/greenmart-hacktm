@@ -1,9 +1,12 @@
 import type { Request, Response } from 'express';
 import type { ShopLocals } from '../../../middleware/authHandlers.ts';
 import { prismaClient } from '../../../db/prismaClient.ts';
-import type { ProductsFilter } from './products.validators.ts';
-import { createProductSchema } from './products.validators.ts';
+import type {
+  CreateProductData,
+  ProductsFilter,
+} from './products.validators.ts';
 import { buildProductsQuery } from './products.mappers.ts';
+import { AppError } from '../../../utils/appError.ts';
 
 export const getProducts = async (
   req: Request,
@@ -19,26 +22,37 @@ export const getProducts = async (
 };
 
 export const createProduct = async (
-  _req: Request,
-  _res: Response<unknown, ShopLocals>,
+  req: Request,
+  res: Response<unknown, ShopLocals>,
 ) => {
-  const validData = createProductSchema.parse(_req.body);
+  const data: CreateProductData = req.body;
+  const { shop } = res.locals;
 
-  const { shop } = _res.locals;
+  const productType = await prismaClient.productType.findUnique({
+    where: { name: data.productType },
+  });
+
+  if (!productType) {
+    throw AppError.badRequest('Product type not found');
+  }
+
   const product = await prismaClient.product.create({
     data: {
-      ...validData,
-     shop: {
-        connect: {
-          id: shop.id,
-        },
-      },
-    productType:{
-      connect: {
-        id: validData.productType,
-      },
-    }
-  }
-});
-  _res.status(201).json(product);
-}
+      shopId: shop.id,
+      city: shop.city,
+      county: shop.county,
+      street: shop.street,
+      latitude: shop.latitude,
+      longitude: shop.longitude,
+      title: data.title,
+      description: data.description,
+      price: data.price,
+      unitType: data.unitType,
+      stock: data.stock,
+      imageId: data.imageId,
+      imageUrl: data.imageUrl,
+      productTypeId: productType?.id,
+    },
+  });
+  res.status(201).json(product);
+};
