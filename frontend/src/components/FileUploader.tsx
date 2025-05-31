@@ -3,10 +3,10 @@ import { Button } from './ui/button';
 import { Upload, X } from 'lucide-react';
 
 type FileUploaderProps = {
-  className: string;
-  files: File[];
+  className?: string;
+  value: File[];
   onValueChange: React.Dispatch<React.SetStateAction<File[]>>;
-  acceptedFileTypes: string;
+  accept: string;
   maxFiles: number;
   maxSize: number;
   allowMultipleFiles: boolean;
@@ -14,9 +14,9 @@ type FileUploaderProps = {
 
 export default function FileUploader({
   className,
-  files,
+  value,
   onValueChange,
-  acceptedFileTypes,
+  accept,
   maxFiles,
   maxSize,
   allowMultipleFiles,
@@ -24,9 +24,9 @@ export default function FileUploader({
   return (
     <FileUpload.Root
       className={className}
-      value={files}
+      value={value}
       onValueChange={onValueChange}
-      accept={acceptedFileTypes}
+      accept={accept}
       maxFiles={maxFiles}
       maxSize={maxSize}
       multiple={allowMultipleFiles}>
@@ -35,19 +35,19 @@ export default function FileUploader({
           <div className='flex items-center justify-center rounded-full border p-2.5'>
             <Upload className='text-muted-foreground size-6' />
           </div>
-          <p className='text-sm font-medium'>Drag & drop files here</p>
+          <p className='text-sm font-medium'>Incarca imagini aici</p>
           <p className='text-muted-foreground text-xs'>
-            Or click to browse (max 2 files)
+            Maxim {maxFiles} {maxFiles > 1 ? 'imagini' : 'imagine'}
           </p>
         </div>
         <FileUpload.Trigger asChild>
           <Button variant='outline' size='sm' className='mt-2 w-fit'>
-            Browse files
+            Cauta imagini
           </Button>
         </FileUpload.Trigger>
       </FileUpload.Dropzone>
       <FileUpload.List>
-        {files.map((file, index) => (
+        {value.map((file, index) => (
           <FileUpload.Item key={index} value={file}>
             <FileUpload.ItemPreview />
             <FileUpload.ItemMetadata />

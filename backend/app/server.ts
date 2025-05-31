@@ -18,6 +18,8 @@ import {
   errorHandler,
   registerProcessErrorHandlers,
 } from './middleware/errorHandlers.ts';
+import { createRouteHandler } from 'uploadthing/express';
+import { mediaUploadClient } from './utils/mediaUploadClient.ts';
 
 const app = express();
 
@@ -29,6 +31,12 @@ app.use(limiter);
 app.use(httpLogger);
 
 // Routes
+app.use(
+  '/api/uploadthing',
+  createRouteHandler({
+    router: mediaUploadClient,
+  }),
+);
 app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use('/api', express.json(), apiRouter);
 app.use(notFound);
