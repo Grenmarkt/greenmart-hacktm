@@ -84,6 +84,7 @@ model Shop {
   workIntervals WorkInterval[]
   review        Review[]
   phone         String
+  avgrev        Decimal        @db.Decimal(2, 1) @default(0.0)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   user          User           @relation(fields: [userId], references: [id])

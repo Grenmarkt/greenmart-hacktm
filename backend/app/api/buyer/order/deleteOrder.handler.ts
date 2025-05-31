@@ -8,8 +8,6 @@ export const deleteOrder = async (
     
     const orderId = req.params['orderId'];
 
-    console.log("Deleting order with ID:", orderId);
-
     const order = await prismaClient.orderProduct.findUnique({
         where: {
             id: orderId,
