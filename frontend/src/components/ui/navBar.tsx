@@ -1,37 +1,63 @@
-import React, { useState } from "react";
-import { Menu } from "lucide-react"; 
+import { useState } from "react";
+import { Menu } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-md px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="text-xl font-bold text-green-700">GreenMart</div>
-        <div className="hidden md:flex gap-4">
-          <button className="text-green-700 font-medium hover:underline items-center">
-            Conectează-te
-          </button>
-          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition items-center">
-            Înregistrează-te
+    <nav className="bg-white shadow-md px-4 py-3">
+      <div className="max-w-7xl mx-auto flex flex-col min-[900px]:flex-row min-[900px]:items-center min-[900px]:justify-between gap-4">
+        
+        <div className="w-full flex items-center justify-between min-[900px]:hidden">
+          <div className="text-2xl font-bold text-green-700">GreenMart</div>
+          <button onClick={() => setIsOpen(!isOpen)}>
+            <Menu className="h-7 w-7 text-green-700" />
           </button>
         </div>
-        <div className="md:hidden">
-          <button onClick={() => setIsOpen(!isOpen)}>
-            <Menu className="h-6 w-6 text-green-700" />
-          </button>
+
+        
+        <div className="hidden min-[900px]:flex w-full items-center justify-between">
+          <div className="text-2xl font-bold text-green-700">GreenMart</div>
+
+          <div className="w-1/2 mx-auto">
+            <input
+              type="text"
+              placeholder="Caută produse..."
+              className="w-full border border-gray-300 rounded-md px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+
+          <div className="flex gap-4 items-center">
+            <button className="text-green-700 font-medium text-base hover:underline">
+              Conectează-te
+            </button>
+            <button className="bg-green-600 text-white px-5 py-2 text-base rounded-lg hover:bg-green-700 transition">
+              Înregistrează-te
+            </button>
+          </div>
+        </div>
+
+       
+        {isOpen && (
+          <div className="min-[900px]:hidden mt-3 flex flex-col gap-2 px-2">
+            <button className="text-green-700 font-medium hover:underline text-left text-base">
+              Conectează-te
+            </button>
+            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-left text-base">
+              Înregistrează-te
+            </button>
+          </div>
+        )}
+
+        
+        <div className="min-[900px]:hidden mt-3 px-2 w-full">
+          <input
+            type="text"
+            placeholder="Caută produse..."
+            className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
         </div>
       </div>
-      {isOpen && (
-        <div className="md:hidden mt-2 p-4 flex flex-col gap-2">
-          <button className="text-green-700 font-medium hover:underline text-center">
-            Conectează-te
-          </button>
-          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-center">
-            Înregistrează-te
-          </button>
-        </div>
-      )}
     </nav>
   );
 };
