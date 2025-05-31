@@ -374,8 +374,8 @@ const SellerDashboard = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Fermier</h1>
-          <p className="text-gray-600">Gestionează produsele și profilul fermei tale</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+          <p className="text-gray-600">Gestionează produsele și profilul tau</p>
         </div>
 
         {/* Stats Cards */}
