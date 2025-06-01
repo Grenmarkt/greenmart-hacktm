@@ -69,16 +69,46 @@ const quickSearches = [
 ];
 
 const products = [
-  { label: 'Mere', value: 'Mere' },
-  { label: 'Capsuni', value: 'Capsuri' },
-  { label: 'Rosii', value: 'Rosii' },
+  { label: 'Rosii Cherry Bio', value: 'Rosii Cherry Bio' },
+  { label: 'Castraveti Sera Bio', value: 'Castraveti Sera Bio' },
+  { label: 'Ardei Gras Rosu Bio', value: 'Ardei Gras Rosu Bio' },
+  { label: 'Mere Ionatan Bio', value: 'Mere Ionatan Bio' },
+  { label: 'Pere Williams Bio', value: 'Pere Williams Bio' },
+  { label: 'Cirese Pata Negra Bio', value: 'Cirese Pata Negra Bio' },
+  { label: 'Pui de Tara Bio', value: 'Pui de Tara Bio' },
+  { label: 'Carne de Porc Bio', value: 'Carne de Porc Bio' },
+  { label: 'Miel de Tara Bio', value: 'Miel de Tara Bio' },
+  { label: 'Branza de Vaci Bio', value: 'Branza de Vaci Bio' },
+  { label: 'Lapte de Tara Bio', value: 'Lapte de Tara Bio' },
+  { label: 'Iaurt de Casa Bio', value: 'Iaurt de Casa Bio' },
+  { label: 'Suc de Mere 100% Bio', value: 'Suc de Mere 100% Bio' },
+  { label: 'Kombucha Taranesca Bio', value: 'Kombucha Taranesca Bio' },
+  { label: 'Limonada cu Mure Bio', value: 'Limonada cu Mure Bio' },
 ];
 
 const cities = [
-  {
-    label: 'Timișoara',
-    value: 'Timisoara',
-  },
+  { label: 'București', value: 'București' },
+  { label: 'Cluj-Napoca', value: 'Cluj-Napoca' },
+  { label: 'Timișoara', value: 'Timișoara' },
+  { label: 'Iași', value: 'Iași' },
+  { label: 'Constanța', value: 'Constanța' },
+  { label: 'Craiova', value: 'Craiova' },
+  { label: 'Brașov', value: 'Brașov' },
+  { label: 'Galați', value: 'Galați' },
+  { label: 'Ploiești', value: 'Ploiești' },
+  { label: 'Oradea', value: 'Oradea' },
+  { label: 'Brăila', value: 'Brăila' },
+  { label: 'Arad', value: 'Arad' },
+  { label: 'Pitești', value: 'Pitești' },
+  { label: 'Sibiu', value: 'Sibiu' },
+  { label: 'Bacău', value: 'Bacău' },
+  { label: 'Buzău', value: 'Buzău' },
+  { label: 'Satu Mare', value: 'Satu Mare' },
+  { label: 'Botoșani', value: 'Botoșani' },
+  { label: 'Târgu Mureș', value: 'Târgu Mureș' },
+  { label: 'Baia Mare', value: 'Baia Mare' },
+  { label: 'Râmnicu Vâlcea', value: 'Râmnicu Vâlcea' },
+  { label: 'Suceava', value: 'Suceava' },
 ];
 
 const formSchema = z.object({
@@ -139,7 +169,7 @@ function RouteComponent() {
                             name='productType'
                             render={({ field }) => (
                               <FormItem className='flex flex-1 flex-col'>
-                                <FormLabel>Tipul produs</FormLabel>
+                                <FormLabel>Tip produs</FormLabel>
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <FormControl>

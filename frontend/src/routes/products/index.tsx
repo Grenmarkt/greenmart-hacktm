@@ -27,15 +27,21 @@ import { cn } from '@/lib/cn';
 
 // 1️⃣ Mock product types, each with an `id` (used in query) and a `name` (displayed)
 const mockProductTypes = [
-  { id: 'Toate', name: 'Toate' },
-  { id: 'fructe', name: 'Fructe' },
-  { id: 'legume', name: 'Legume' },
-  { id: 'lactate', name: 'Lactate' },
-  { id: 'cereale', name: 'Cereale' },
-  { id: 'carne', name: 'Carne' },
-  { id: 'miere_si_gemuri', name: 'Miere și Gemuri' },
-  { id: 'muraturi', name: 'Murături' },
-  { id: 'sucuri_si_bauturi_alcoolice', name: 'Sucuri și Băuturi Alcoolice' },
+  { id: 'Rosii Cherry Bio', name: 'Rosii Cherry Bio' },
+  { id: 'Castraveti Sera Bio', name: 'Castraveti Sera Bio' },
+  { id: 'Ardei Gras Rosu Bio', name: 'Ardei Gras Rosu Bio' },
+  { id: 'Mere Ionatan Bio', name: 'Mere Ionatan Bio' },
+  { id: 'Pere Williams Bio', name: 'Pere Williams Bio' },
+  { id: 'Cirese Pata Negra Bio', name: 'Cirese Pata Negra Bio' },
+  { id: 'Pui de Tara Bio', name: 'Pui de Tara Bio' },
+  { id: 'Carne de Porc Bio', name: 'Carne de Porc Bio' },
+  { id: 'Miel de Tara Bio', name: 'Miel de Tara Bio' },
+  { id: 'Branza de Vaci Bio', name: 'Branza de Vaci Bio' },
+  { id: 'Lapte de Tara Bio', name: 'Lapte de Tara Bio' },
+  { id: 'Iaurt de Casa Bio', name: 'Iaurt de Casa Bio' },
+  { id: 'Suc de Mere 100% Bio', name: 'Suc de Mere 100% Bio' },
+  { id: 'Kombucha Taranesca Bio', name: 'Kombucha Taranesca Bio' },
+  { id: 'Limonada cu Mure Bio', name: 'Limonada cu Mure Bio' },
 ];
 
 type ProductSearch = {

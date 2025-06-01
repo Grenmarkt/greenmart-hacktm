@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { $fetch } from '@/lib/http/client';
 import { queryClient } from '../client';
-import { router } from '@/lib/router';
+import { useRouter } from '@tanstack/react-router';
 
 type CreateProductData = {
   imageUrl: string | undefined;
@@ -15,6 +15,7 @@ type CreateProductData = {
 };
 
 export function useCreateProduct() {
+  const router = useRouter();
   return useMutation({
     mutationKey: ['products', 'create'] as const,
     mutationFn: (createProductData: CreateProductData) =>

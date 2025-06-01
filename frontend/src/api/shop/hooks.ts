@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { $fetch } from '@/lib/http/client';
 import { BecomeSellerInput } from '@/lib/http/models/seller';
 import { queryClient } from '../client';
-import { router } from '@/lib/router';
+import { useRouter } from '@tanstack/react-router';
 
 export function useUpdateShopDescription() {
   return useMutation({
@@ -26,6 +26,7 @@ export function useUpdateShopWorkIntervals() {
 }
 
 export function useBecomeSeller() {
+  const router = useRouter();
   return useMutation({
     mutationKey: ['shop', 'create'] as const,
     mutationFn: (data: BecomeSellerInput) =>

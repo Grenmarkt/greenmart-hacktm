@@ -66,15 +66,22 @@ const formSchema = z.object({
 
 export type ProductUploadFormInput = z.infer<typeof formSchema>;
 
-const fruits = [
-  {
-    label: 'Organic Tomato',
-    value: 'Organic Tomato',
-  },
-  {
-    label: 'cartofi',
-    value: 'cartofi',
-  },
+const products = [
+  { label: 'Rosii Cherry Bio', value: 'Rosii Cherry Bio' },
+  { label: 'Castraveti Sera Bio', value: 'Castraveti Sera Bio' },
+  { label: 'Ardei Gras Rosu Bio', value: 'Ardei Gras Rosu Bio' },
+  { label: 'Mere Ionatan Bio', value: 'Mere Ionatan Bio' },
+  { label: 'Pere Williams Bio', value: 'Pere Williams Bio' },
+  { label: 'Cirese Pata Negra Bio', value: 'Cirese Pata Negra Bio' },
+  { label: 'Pui de Tara Bio', value: 'Pui de Tara Bio' },
+  { label: 'Carne de Porc Bio', value: 'Carne de Porc Bio' },
+  { label: 'Miel de Tara Bio', value: 'Miel de Tara Bio' },
+  { label: 'Branza de Vaci Bio', value: 'Branza de Vaci Bio' },
+  { label: 'Lapte de Tara Bio', value: 'Lapte de Tara Bio' },
+  { label: 'Iaurt de Casa Bio', value: 'Iaurt de Casa Bio' },
+  { label: 'Suc de Mere 100% Bio', value: 'Suc de Mere 100% Bio' },
+  { label: 'Kombucha Taranesca Bio', value: 'Kombucha Taranesca Bio' },
+  { label: 'Limonada cu Mure Bio', value: 'Limonada cu Mure Bio' },
 ];
 
 export function ProductUploadForm({ onSubmit }: propType) {
@@ -115,8 +122,9 @@ export function ProductUploadForm({ onSubmit }: propType) {
                             !field.value && 'text-muted-foreground',
                           )}>
                           {field.value ?
-                            fruits.find((fruit) => fruit.value === field.value)
-                              ?.label
+                            products.find(
+                              (product) => product.value === field.value,
+                            )?.label
                           : 'Alege tipul'}
                           <ChevronsUpDown className='opacity-50' />
                         </Button>
@@ -131,18 +139,18 @@ export function ProductUploadForm({ onSubmit }: propType) {
                         <CommandList>
                           <CommandEmpty>Tipul nu a fost gasit</CommandEmpty>
                           <CommandGroup>
-                            {fruits.map((fruit) => (
+                            {products.map((product) => (
                               <CommandItem
-                                value={fruit.label}
-                                key={fruit.value}
+                                value={product.label}
+                                key={product.value}
                                 onSelect={() => {
-                                  form.setValue('productType', fruit.value);
+                                  form.setValue('productType', product.value);
                                 }}>
-                                {fruit.label}
+                                {product.label}
                                 <Check
                                   className={cn(
                                     'ml-auto',
-                                    fruit.value === field.value ?
+                                    product.value === field.value ?
                                       'opacity-100'
                                     : 'opacity-0',
                                   )}
@@ -252,7 +260,7 @@ export function ProductUploadForm({ onSubmit }: propType) {
                 </FormItem>
               )}
             />
-            <Button type='submit'>Creaza postare</Button>
+            <Button type='submit'>Publica produsul</Button>
           </form>
         </Form>
       </CardContent>

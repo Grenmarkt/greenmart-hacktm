@@ -1,5 +1,6 @@
 import { $fetch } from '@/lib/http/client';
 import { useMutation } from '@tanstack/react-query';
+import { queryClient } from '../client';
 
 type CreateOrderProductData = {
   userId: string;
@@ -12,6 +13,9 @@ export function useCreateOrderProduct() {
     mutationKey: ['products', 'create', 'order'] as const,
     mutationFn: (CreateOrderProductData: CreateOrderProductData) =>
       $fetch('@post/api/buyer/orders', { body: CreateOrderProductData }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
   });
 }
 

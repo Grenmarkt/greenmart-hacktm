@@ -2,9 +2,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { sessionQueryOptions } from './queries';
 import { auth } from '@/lib/auth/client';
 import { queryClient } from '../client';
-import { router } from '@/lib/router';
 
 import { toast } from 'sonner';
+import { useRouter } from '@tanstack/react-router';
 
 type SignupData = {
   name: string;
@@ -23,6 +23,7 @@ export function useSession() {
 }
 
 export function useSignup() {
+  const router = useRouter();
   return useMutation({
     mutationKey: ['auth', 'signup'] as const,
     mutationFn: (signupData: SignupData) => auth.signUp.email(signupData),
@@ -37,6 +38,7 @@ export function useSignup() {
 }
 
 export function useSignin() {
+  const router = useRouter();
   return useMutation({
     mutationKey: ['auth', 'signin'] as const,
     mutationFn: (signinData: SigninData) => auth.signIn.email(signinData),
@@ -56,6 +58,7 @@ export function useSignin() {
 }
 
 export function useSignout() {
+  const router = useRouter();
   return useMutation({
     mutationKey: ['auth', 'signout'] as const,
     mutationFn: () => auth.signOut(),

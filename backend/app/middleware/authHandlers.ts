@@ -4,6 +4,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { Role, type Order, type Shop } from '@prisma/client';
 import { AppError } from '../utils/appError.ts';
 import { prismaClient } from '../db/prismaClient.ts';
+import { logger } from '../utils/logger.ts';
 
 export interface AuthLocals {
   user: NonNullable<Auth['user']>;
@@ -42,11 +43,11 @@ export const sellerHandler = async (
   next: NextFunction,
 ) => {
   const { user } = res.locals;
-  if (user.role == Role.SELLER) {
+  if (user?.role === Role.SELLER) {
     throw AppError.forbidden('Access denied. You are alr a seller');
   }
   next();
-}
+};
 
 export const shopHandler = async (
   _req: Request,
@@ -54,6 +55,7 @@ export const shopHandler = async (
   next: NextFunction,
 ) => {
   const { user } = res.locals;
+  logger.debug(user);
 
   if (user.role !== Role.SELLER) {
     throw AppError.forbidden('Access denied. Please create a seller account.');

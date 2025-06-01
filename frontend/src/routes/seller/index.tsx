@@ -3,6 +3,7 @@ import {
   createFileRoute,
   Link,
   redirect,
+  useMatch,
   useRouteContext,
 } from '@tanstack/react-router';
 import React, { useState, useEffect } from 'react';
@@ -36,6 +37,7 @@ import {
   useUpdateShopDescription,
   useUpdateShopWorkIntervals,
 } from '@/api/shop/hooks';
+import Navbar from '@/components/NavBar';
 
 export const Route = createFileRoute('/seller/')({
   beforeLoad: ({ context: { authData } }) => {
@@ -148,6 +150,12 @@ const ProductCard = ({
           <div className='flex items-center justify-between'>
             <span className='text-2xl font-bold text-green-600'>
               {product.price.toFixed(2)} RON
+            </span>
+            <span className='text-2xl font-bold text-green-600'>
+              {product.unitType !== 'UNIT' ?
+                product.stock.toFixed(2)
+              : product.stock.toFixed(0)}{' '}
+              {product.unitType === 'UNIT' ? 'Bucati' : product.unitType}
             </span>
           </div>
           <div className='flex items-center gap-1 text-sm text-gray-500'>
@@ -332,6 +340,11 @@ function RouteComponent() {
   const {
     authData: { user },
   } = useRouteContext({ from: '/seller/' });
+  const match = useMatch({ from: '/seller/' });
+  const authData = match.context.authData;
+
+  const isUser = !!authData?.user;
+  const isSeller = authData?.user.role === 'SELLER';
   const res = useQuery(createSellerQuery(user.id));
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const shopInfo = res.data as any;
@@ -355,8 +368,9 @@ function RouteComponent() {
   >(shopInfo.workIntervals);
 
   return (
-    <div className='min-h-screen bg-gray-50 p-4'>
-      <div className='mx-auto max-w-7xl'>
+    <div className='min-h-screen bg-gray-50'>
+      <Navbar isSeller={isSeller} isUser={isUser} />
+      <div className='mx-auto mt-14 max-w-7xl'>
         <div className='mb-8'>
           <h1 className='mb-2 text-3xl font-bold text-gray-900'>
             Salut, {user.name}
