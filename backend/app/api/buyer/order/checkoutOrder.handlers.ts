@@ -30,7 +30,7 @@ export const checkoutOrder = async (
 ): Promise<any> => {
   const { user } = res.locals;
 
-  let order = await prismaClient.order.findFirst({
+  const order = await prismaClient.order.findFirst({
     where: { userId: user.id, status: "PENDING" },
   });
 

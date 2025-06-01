@@ -31,5 +31,9 @@ function RouteComponent() {
       });
     }
   };
-  return <ProductUploadForm onSubmit={onFormSubmit}></ProductUploadForm>;
+  return (
+    <div className='mx-auto flex w-11/12 items-center justify-center p-8'>
+      <ProductUploadForm onSubmit={onFormSubmit}></ProductUploadForm>
+    </div>
+  );
 }

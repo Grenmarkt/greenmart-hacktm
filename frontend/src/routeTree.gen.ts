@@ -16,6 +16,7 @@ import { Route as SigninImport } from './routes/signin'
 import { Route as ProtectedImport } from './routes/protected'
 import { Route as CreateProductImport } from './routes/create-product'
 import { Route as CartImport } from './routes/cart'
+import { Route as BecomeSellerImport } from './routes/become-seller'
 import { Route as IndexImport } from './routes/index'
 import { Route as TestIndexImport } from './routes/test/index'
 import { Route as SellerIndexImport } from './routes/seller/index'
@@ -52,6 +53,12 @@ const CreateProductRoute = CreateProductImport.update({
 const CartRoute = CartImport.update({
   id: '/cart',
   path: '/cart',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BecomeSellerRoute = BecomeSellerImport.update({
+  id: '/become-seller',
+  path: '/become-seller',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -100,6 +107,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/become-seller': {
+      id: '/become-seller'
+      path: '/become-seller'
+      fullPath: '/become-seller'
+      preLoaderRoute: typeof BecomeSellerImport
       parentRoute: typeof rootRoute
     }
     '/cart': {
@@ -179,6 +193,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/become-seller': typeof BecomeSellerRoute
   '/cart': typeof CartRoute
   '/create-product': typeof CreateProductRoute
   '/protected': typeof ProtectedRoute
@@ -193,6 +208,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/become-seller': typeof BecomeSellerRoute
   '/cart': typeof CartRoute
   '/create-product': typeof CreateProductRoute
   '/protected': typeof ProtectedRoute
@@ -208,6 +224,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/become-seller': typeof BecomeSellerRoute
   '/cart': typeof CartRoute
   '/create-product': typeof CreateProductRoute
   '/protected': typeof ProtectedRoute
@@ -224,6 +241,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/become-seller'
     | '/cart'
     | '/create-product'
     | '/protected'
@@ -237,6 +255,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/become-seller'
     | '/cart'
     | '/create-product'
     | '/protected'
@@ -250,6 +269,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/become-seller'
     | '/cart'
     | '/create-product'
     | '/protected'
@@ -265,6 +285,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BecomeSellerRoute: typeof BecomeSellerRoute
   CartRoute: typeof CartRoute
   CreateProductRoute: typeof CreateProductRoute
   ProtectedRoute: typeof ProtectedRoute
@@ -279,6 +300,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BecomeSellerRoute: BecomeSellerRoute,
   CartRoute: CartRoute,
   CreateProductRoute: CreateProductRoute,
   ProtectedRoute: ProtectedRoute,
@@ -302,6 +324,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/become-seller",
         "/cart",
         "/create-product",
         "/protected",
@@ -316,6 +339,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/become-seller": {
+      "filePath": "become-seller.tsx"
     },
     "/cart": {
       "filePath": "cart.tsx"

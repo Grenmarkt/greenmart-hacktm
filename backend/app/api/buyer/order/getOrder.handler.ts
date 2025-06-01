@@ -23,15 +23,11 @@ export const getOrderProducts= async(
                 include:
                 {
                     product: {
-                        include: {
-                            productType: true,
-                            shop: true
-                        }
+                        include: { productType: true, shop: true }
                     }
                 }
             });
         }));
-
     
     res.status(202).json(orderProducts);
 }
