@@ -1,7 +1,9 @@
-import {z} from 'zod/v4';
+import { z } from "zod";
 
-export const createReviewSchema = z.strictObject({
-    rating: z.number().min(1).max(5),
-    comment: z.string().optional(),
+export const createReview = z.object
+({
+  rating: z.number().min(1).max(5),
+  comment: z.string().optional(),
 });
 
+export type CreateReviewData = z.infer<typeof createReview>;
