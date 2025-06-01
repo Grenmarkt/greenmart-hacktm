@@ -82,7 +82,7 @@ model Shop {
   latitude      Decimal        @db.Decimal(9, 6)
   longitude     Decimal        @db.Decimal(9, 6)
   workIntervals WorkInterval[]
-  review        Review[]
+  review        Review[]       
   phone         String
   avgrev        Decimal        @db.Decimal(2, 1) @default(0.0)
   createdAt     DateTime       @default(now())
@@ -96,7 +96,7 @@ model Shop {
 model Review{
   id        String   @id @default(uuid())
   shopId    String
-  shop      Shop     @relation(fields: [shopId], references: [id])
+  shop      Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   rating    Int      @default(0)

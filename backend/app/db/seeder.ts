@@ -12,6 +12,7 @@ async function main() {
   // Clear existing data (optional - use with caution in production)
   await prismaClient.$transaction([
     prismaClient.verification.deleteMany(),
+    prismaClient.review.deleteMany(),
     prismaClient.account.deleteMany(),
     prismaClient.session.deleteMany(),
     prismaClient.orderProduct.deleteMany(),
