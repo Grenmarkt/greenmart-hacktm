@@ -19,7 +19,7 @@ enum OrderStatus {
 model Order {
   id              String         @id @default(uuid())
   userId          String
-  status          OrderStatus    @default(CREATED)
+  status          OrderStatus    @default(PENDING)
   user            User           @relation(fields: [userId], references: [id])
   orderedProducts OrderProduct[]
   createdAt       DateTime       @default(now())
