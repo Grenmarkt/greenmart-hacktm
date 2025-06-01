@@ -1,6 +1,10 @@
 import { createProductQuery } from '@/api/products/quries';
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import {
+  createFileRoute,
+  redirect,
+  useRouteContext,
+} from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import StarRating from '@/components/StarRating';
@@ -8,6 +12,8 @@ import { Product } from '@/lib/http/models/products';
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { useCreateOrderProduct } from '@/api/order/hooks';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/products/$productId')({
   loader: ({ context, params }) => {
@@ -172,6 +178,9 @@ function ReviewsSection({ product }: { product: Product }) {
 
 function RouteComponent() {
   const MOCK_RATING = 5;
+  const mutation = useCreateOrderProduct();
+  const { authData } = useRouteContext({ from: '/products/$productId' });
+  const userId = authData?.user.id;
   const { productId } = Route.useParams();
   const product = useQuery(createProductQuery(productId)).data;
   const [quantity, setQuantity] = useState(1);
@@ -188,8 +197,14 @@ function RouteComponent() {
   const handleIncreaseQuantity = () => setQuantity((prev) => prev + 1);
   const handleDecreaseQuantity = () =>
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-  const handleAddToCart = () =>
-    alert(`S-au adăugat ${quantity} ${product?.title} în coș`);
+  const handleAddToCart = () => {
+    if (!userId) {
+      toast.error('Nu esti autentificat');
+      throw redirect({ to: '/signin' });
+    }
+    mutation.mutate({ userId, productId, quantity });
+    toast('Produsul a fost adaugat in cont cu cantitatea dorita');
+  };
 
   return (
     <div className='container mx-auto px-4 py-8'>
