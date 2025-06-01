@@ -93,7 +93,7 @@ export function ProductUploadForm({ onSubmit }: propType) {
   return (
     <Card className='w-[80%] max-w-3xl px-8 py-10'>
       <CardHeader>
-        <CardTitle>Adauga un produs</CardTitle>
+        <CardTitle className='text-2xl'>Adauga un produs</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>

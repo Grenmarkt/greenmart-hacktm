@@ -9,6 +9,6 @@ const router = Router();
 router.use('/shop', shopRouter);
 router.use('/buyer', buyerRouter);
 router.use('/seller', sellerRouter);
-router.use('/shop',shop1Router);
+router.use('/shop', shop1Router);
 
 export { router as apiRouter };

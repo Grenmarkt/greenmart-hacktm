@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { $fetch } from '@/lib/http/client';
+import { queryClient } from '../client';
+import { router } from '@/lib/router';
 
 type CreateProductData = {
   imageUrl: string | undefined;
@@ -17,5 +19,9 @@ export function useCreateProduct() {
     mutationKey: ['products', 'create'] as const,
     mutationFn: (createProductData: CreateProductData) =>
       $fetch('@post/api/shop/products', { body: createProductData }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      router.navigate({ to: '/seller' });
+    },
   });
 }

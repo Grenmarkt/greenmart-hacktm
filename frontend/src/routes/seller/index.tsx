@@ -1,4 +1,10 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useRouteContext,
+} from '@tanstack/react-router';
 import React, { useState, useEffect } from 'react';
 import {
   Card,
@@ -18,16 +24,33 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Star, Plus, Edit, MapPin, Clock, Trash2 } from 'lucide-react';
 import mapboxgl, { Map, Marker } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { toast } from 'sonner';
 import { Product } from '@/lib/http/models/products';
+import { createSellerQuery } from '@/api/shop/queries';
+import { useQuery } from '@tanstack/react-query';
+import {
+  useUpdateShopDescription,
+  useUpdateShopWorkIntervals,
+} from '@/api/shop/hooks';
 
 export const Route = createFileRoute('/seller/')({
+  beforeLoad: ({ context: { authData } }) => {
+    if (!authData) {
+      throw redirect({ to: '/signin' });
+    }
+    if (authData.user.role !== 'SELLER') {
+      // throw redirect({to:'/become-seller'})
+    }
+    return { authData };
+  },
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(
+      createSellerQuery(context.authData.user.id),
+    ),
   component: RouteComponent,
 });
 
@@ -47,33 +70,33 @@ interface Review {
   productName: string;
 }
 
-interface WorkingHours {
-  luni: string;
-  marti: string;
-  miercuri: string;
-  joi: string;
-  vineri: string;
-  sambata: string;
-  duminica: string;
-}
+// interface WorkingHours {
+//   luni: string;
+//   marti: string;
+//   miercuri: string;
+//   joi: string;
+//   vineri: string;
+//   sambata: string;
+//   duminica: string;
+// }
 
-interface SellerProfile {
-  description: string;
-  location: {
-    lat: number;
-    lng: number;
-    address: string;
-  };
-  workingHours: WorkingHours;
-}
+// interface SellerProfile {
+//   description: string;
+//   location: {
+//     lat: number;
+//     lng: number;
+//     address: string;
+//   };
+//   workingHours: WorkingHours;
+// }
 
-interface ProfileEdit {
-  description: string;
-  address: string;
-  lat: string;
-  lng: string;
-  workingHours: WorkingHours;
-}
+// interface ProfileEdit {
+//   description: string;
+//   address: string;
+//   lat: string;
+//   lng: string;
+//   workingHours: WorkingHours;
+// }
 
 const initialReviews: Review[] = [
   {
@@ -104,7 +127,7 @@ const ProductCard = ({
               {product.title}
             </CardTitle>
             <CardDescription className='mt-1 text-sm text-gray-600'>
-              CATEGORY • SHOP
+              {product.productType.name} • {product.productType.category}
             </CardDescription>
           </div>
           <Badge variant='default' className='bg-green-100 text-green-800'>
@@ -126,17 +149,11 @@ const ProductCard = ({
             <span className='text-2xl font-bold text-green-600'>
               {product.price.toFixed(2)} RON
             </span>
-            <div className='flex items-center gap-1'>
-              <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
-              <span className='text-sm font-medium'>RATING</span>
-              <span className='text-sm text-gray-500'>REVIEW</span>
-            </div>
           </div>
           <div className='flex items-center gap-1 text-sm text-gray-500'>
             <MapPin className='h-4 w-4' />
             <span>
-              Lat: {product.latitude.toFixed(4)}, Lng:{' '}
-              {product.longitude.toFixed(4)}
+              {product.city} • {product.street}
             </span>
           </div>
           <div className='flex gap-2 pt-2'>
@@ -288,96 +305,62 @@ const LocationPicker: React.FC = () => {
   );
 };
 
+type WeekDay =
+  | 'MONDAY'
+  | 'TUESDAY'
+  | 'WEDNESDAY'
+  | 'THURSDAY'
+  | 'FRIDAY'
+  | 'SATURDAY'
+  | 'SUNDAY';
+
+const romanianWeekDays: Record<WeekDay, string> = {
+  MONDAY: 'Luni',
+  TUESDAY: 'Marți',
+  WEDNESDAY: 'Miercuri',
+  THURSDAY: 'Joi',
+  FRIDAY: 'Vineri',
+  SATURDAY: 'Sâmbătă',
+  SUNDAY: 'Duminică',
+};
+
+function toRomanianDay(day: WeekDay): string {
+  return romanianWeekDays[day];
+}
+
 function RouteComponent() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const {
+    authData: { user },
+  } = useRouteContext({ from: '/seller/' });
+  const res = useQuery(createSellerQuery(user.id));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const shopInfo = res.data as any;
   const [reviews] = useState<Review[]>(initialReviews);
-  const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductEdit | null>(
     null,
   );
 
-  // Seller profile state
-  const [sellerProfile, setSellerProfile] = useState<SellerProfile>({
-    description:
-      'Fermă specializată în produse organice și naturale de calitate superioară. Oferim produse proaspete, crescute cu grijă și pasiune.',
-    location: {
-      lat: 45.7494,
-      lng: 21.2272,
-      address: 'Timișoara, Timiș',
-    },
-    workingHours: {
-      luni: '08:00-18:00',
-      marti: '08:00-18:00',
-      miercuri: '08:00-18:00',
-      joi: '08:00-18:00',
-      vineri: '08:00-18:00',
-      sambata: '09:00-15:00',
-      duminica: 'Închis',
-    },
-  });
+  const mutateShopDescription = useUpdateShopDescription();
+  const [profileDescription, setProfileDescription] = useState<string>(
+    shopInfo.description,
+  );
 
-  const [profileEdit, setProfileEdit] = useState<ProfileEdit>({
-    description: sellerProfile.description,
-    address: sellerProfile.location.address,
-    lat: sellerProfile.location.lat.toString(),
-    lng: sellerProfile.location.lng.toString(),
-    workingHours: { ...sellerProfile.workingHours },
-  });
-
-  const handleEditProduct = (product: Product) => {
-    setEditingProduct({
-      ...product,
-      price: product.price.toString(),
-    });
-  };
-
-  const handleUpdateProduct = () => {
-    if (!editingProduct) return;
-
-    const updatedProduct: Product = {
-      ...editingProduct,
-      price:
-        typeof editingProduct.price === 'string' ?
-          parseFloat(editingProduct.price)
-        : editingProduct.price,
-      latitude: parseFloat(profileEdit.lat),
-      longitude: parseFloat(profileEdit.lng),
-    };
-
-    setProducts(
-      products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
-    );
-    setEditingProduct(null);
-    toast.success('Produsul a fost actualizat cu succes!');
-  };
-
-  const handleDeleteProduct = (productId: string) => {
-    setProducts(products.filter((p) => p.id !== productId));
-    toast.success('Produsul a fost șters!');
-  };
-
-  // Profile functions
-  const updateSellerProfile = () => {
-    setSellerProfile({
-      ...sellerProfile,
-      description: profileEdit.description,
-      location: {
-        lat: parseFloat(profileEdit.lat),
-        lng: parseFloat(profileEdit.lng),
-        address: profileEdit.address,
-      },
-      workingHours: { ...profileEdit.workingHours },
-    });
-    toast.success('Profilul a fost actualizat cu succes!');
-  };
-
-  const totalProducts = products.length;
+  const mutateWorkIntervals = useUpdateShopWorkIntervals();
+  const [workIntervals, setWorkIntervals] = useState<
+    {
+      day: string;
+      startTime: string;
+      endTime: string;
+    }[]
+  >(shopInfo.workIntervals);
 
   return (
     <div className='min-h-screen bg-gray-50 p-4'>
       <div className='mx-auto max-w-7xl'>
         <div className='mb-8'>
-          <h1 className='mb-2 text-3xl font-bold text-gray-900'>Dashboard</h1>
+          <h1 className='mb-2 text-3xl font-bold text-gray-900'>
+            Salut, {user.name}
+          </h1>
           <p className='text-gray-600'>Gestionează produsele și profilul tau</p>
         </div>
 
@@ -385,14 +368,19 @@ function RouteComponent() {
           <Card>
             <CardHeader className='pb-2'>
               <CardDescription>Total Produse</CardDescription>
-              <CardTitle className='text-2xl'>{totalProducts}</CardTitle>
+              <CardTitle className='text-2xl'>
+                {shopInfo.Product.length}
+              </CardTitle>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader className='pb-2'>
               <CardDescription>Rating Mediu</CardDescription>
               <CardTitle className='flex items-center gap-1 text-2xl'>
-                RATING
+                {shopInfo.review.reduce(
+                  (acc: number, val: { rating: number }) => acc + val.rating,
+                  0,
+                ) / shopInfo.review.length}
                 <Star className='h-5 w-5 fill-yellow-400 text-yellow-400' />
               </CardTitle>
             </CardHeader>
@@ -400,15 +388,15 @@ function RouteComponent() {
           <Card>
             <CardHeader className='pb-2'>
               <CardDescription>Total Review-uri</CardDescription>
-              <CardTitle className='text-2xl'>TOTAL REVIEWS</CardTitle>
+              <CardTitle className='text-2xl'>
+                {shopInfo.review.length}
+              </CardTitle>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader className='pb-2'>
-              <CardDescription>Câștiguri Estimative</CardDescription>
-              <CardTitle className='text-2xl text-green-600'>
-                {products.reduce((sum, p) => sum + p.price, 0).toFixed(0)} RON
-              </CardTitle>
+              <CardDescription>Câștiguri Totale</CardDescription>
+              <CardTitle className='text-2xl text-green-600'>0 RON</CardTitle>
             </CardHeader>
           </Card>
         </div>
@@ -423,20 +411,18 @@ function RouteComponent() {
           <TabsContent value='products' className='space-y-6'>
             <div className='flex items-center justify-between'>
               <h2 className='text-2xl font-bold'>Produsele Tale</h2>
-              <Dialog open={isAddingProduct} onOpenChange={setIsAddingProduct}>
-                <DialogTrigger asChild>
-                  <Link to='/create-product'>
-                    <Plus className='mr-2 h-4 w-4' />
-                    Adaugă Produs
-                  </Link>
-                </DialogTrigger>
-              </Dialog>
+              <Button asChild>
+                <Link to='/create-product' className='flex items-center gap-1'>
+                  Adaugă Produs
+                  <Plus className='h-4 w-4' />
+                </Link>
+              </Button>
             </div>
 
             <ProductList
-              products={products}
-              onEdit={handleEditProduct}
-              onDelete={handleDeleteProduct}
+              products={shopInfo.Product}
+              onEdit={(() => {}) as any}
+              onDelete={(() => {}) as any}
             />
 
             <Dialog
@@ -488,7 +474,7 @@ function RouteComponent() {
                       />
                     </div>
                     <div className='flex gap-2'>
-                      <Button onClick={handleUpdateProduct} className='flex-1'>
+                      <Button onClick={(() => {}) as any} className='flex-1'>
                         Salvează Modificările
                       </Button>
                       <Button
@@ -522,17 +508,15 @@ function RouteComponent() {
                 </CardHeader>
                 <CardContent className='space-y-4'>
                   <Textarea
-                    value={profileEdit.description}
-                    onChange={(e) =>
-                      setProfileEdit({
-                        ...profileEdit,
-                        description: e.target.value,
-                      })
-                    }
+                    value={profileDescription}
+                    onChange={(e) => setProfileDescription(e.target.value)}
                     rows={4}
                     placeholder='Descrie ferma ta...'
                   />
-                  <Button onClick={updateSellerProfile}>
+                  <Button
+                    onClick={() =>
+                      mutateShopDescription.mutate(profileDescription)
+                    }>
                     Salvează Descrierea
                   </Button>
                 </CardContent>
@@ -561,28 +545,54 @@ function RouteComponent() {
                 </CardHeader>
                 <CardContent className='space-y-4'>
                   <div className='grid gap-3'>
-                    {Object.entries(profileEdit.workingHours).map(
-                      ([day, hours]) => (
-                        <div key={day} className='flex items-center gap-4'>
-                          <Label className='w-20 capitalize'>{day}</Label>
+                    {workIntervals.map(({ day, startTime, endTime }, i) => (
+                      <div key={day} className='grid grid-cols-3 gap-6'>
+                        <Label className='text-lg font-semibold'>
+                          {toRomanianDay(day as WeekDay)}
+                        </Label>
+                        <div className='flex flex-col items-center gap-2'>
+                          <Label className='capitalize'>De la</Label>
                           <Input
-                            value={hours}
+                            type='time'
+                            className='text-center'
+                            value={startTime}
                             onChange={(e) =>
-                              setProfileEdit({
-                                ...profileEdit,
-                                workingHours: {
-                                  ...profileEdit.workingHours,
-                                  [day]: e.target.value,
-                                },
-                              })
+                              setWorkIntervals(
+                                workIntervals.map((day, j) => {
+                                  if (i !== j) return day;
+                                  return { ...day, startTime: e.target.value };
+                                }),
+                              )
                             }
                             placeholder='ex. 08:00-18:00 sau Închis'
                           />
                         </div>
-                      ),
-                    )}
+                        <div className='flex flex-col items-center gap-2'>
+                          <Label className='capitalize'>Pana la</Label>
+                          <Input
+                            type='time'
+                            className='text-center'
+                            value={endTime}
+                            onChange={(e) =>
+                              setWorkIntervals(
+                                workIntervals.map((day, j) => {
+                                  if (i !== j) return day;
+                                  return { ...day, endTime: e.target.value };
+                                }),
+                              )
+                            }
+                            placeholder='ex. 08:00-18:00 sau Închis'
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <Button onClick={updateSellerProfile}>Salvează Orarul</Button>
+                  <Button
+                    onClick={() => {
+                      mutateWorkIntervals.mutate(workIntervals);
+                    }}>
+                    Salvează Orarul
+                  </Button>
                 </CardContent>
               </Card>
             </div>
