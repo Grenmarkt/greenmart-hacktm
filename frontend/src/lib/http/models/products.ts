@@ -23,8 +23,8 @@ export const productOutputSchema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string(),
-  imageId: z.string(),
-  imageUrl: z.string(),
+  imageId: z.string().nullish(), // Use .nullish() if the field can be null or undefined
+  imageUrl: z.string().nullish(), // Same here, use .nullish() for optional fields
   price: z.coerce.number(), // If this should be a number, use z.coerce.number()
   stock: z.coerce.number(), // Same here, you can coerce if needed
   unitType: z.string(),
