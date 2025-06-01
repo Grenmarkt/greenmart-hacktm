@@ -20,5 +20,8 @@
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "dependencies": {
+    "twilio": "^5.7.0"
+  }
 }
