@@ -14,3 +14,10 @@ export function useCreateOrderProduct() {
       $fetch('@post/api/buyer/orders', { body: CreateOrderProductData }),
   });
 }
+
+export function useCheckoutOrder() {
+  return useMutation({
+    mutationKey: ['products', 'create', 'order'] as const,
+    mutationFn: () => $fetch('@post/api/buyer/orders/checkout'),
+  });
+}
