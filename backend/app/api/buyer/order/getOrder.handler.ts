@@ -14,7 +14,6 @@ export const getOrderProducts= async(
         }
     });
 
-    console.log("Found orders for user:", user.id, order);
 
     const orderProducts = await Promise.all(order.map(async (order) => {
             return await prismaClient.orderProduct.findMany({
@@ -23,7 +22,12 @@ export const getOrderProducts= async(
                 },
                 include:
                 {
-                    product: true
+                    product: {
+                        include: {
+                            productType: true,
+                            shop: true
+                        }
+                    }
                 }
             });
         }));
