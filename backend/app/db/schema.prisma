@@ -82,7 +82,7 @@ model Shop {
   latitude      Decimal        @db.Decimal(9, 6)
   longitude     Decimal        @db.Decimal(9, 6)
   workIntervals WorkInterval[]
-  review        Review[]       
+  review        Review[]
   phone         String
   avgrev        Decimal        @default(0.0) @db.Decimal(2, 1)
   createdAt     DateTime       @default(now())

@@ -19,5 +19,5 @@ export const schema = createSchema({
   '@get/api/buyer/products/:productId': { output: productOutputSchema },
   '@get/api/shop/seller/:sellerId': { output: sellerInfoOutputSchema },
   '@patch/api/shop': {},
-  '@post/api/seller/beSeller': { input: becomeSellerInputSchema },
+  '@post/api/seller/becomeSeller': { input: becomeSellerInputSchema },
 });

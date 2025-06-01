@@ -92,7 +92,7 @@ const Map: React.FC<MapProps> = ({ products, hoveredProduct }) => {
         const el = document.createElement('div');
         el.className = 'marker';
         // Show the price inside the marker
-        el.textContent = `$${product.price.toFixed(0)}`;
+        el.textContent = `${product.price.toFixed(0)}`;
         // Tag with product ID
         el.setAttribute('data-product-id', productId);
 

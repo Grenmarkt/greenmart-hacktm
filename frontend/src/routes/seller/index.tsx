@@ -43,7 +43,7 @@ export const Route = createFileRoute('/seller/')({
       throw redirect({ to: '/signin' });
     }
     if (authData.user.role !== 'SELLER') {
-      // throw redirect({to:'/become-seller'})
+      throw redirect({ to: '/become-seller' });
     }
     return { authData };
   },
@@ -138,7 +138,7 @@ const ProductCard = ({
       <CardContent>
         <div className='space-y-3'>
           <img
-            src={product.imageUrl}
+            src={product.imageUrl!}
             alt={product.title}
             className='h-48 w-full rounded-md bg-gray-100 object-cover'
           />
@@ -377,10 +377,21 @@ function RouteComponent() {
             <CardHeader className='pb-2'>
               <CardDescription>Rating Mediu</CardDescription>
               <CardTitle className='flex items-center gap-1 text-2xl'>
-                {shopInfo.review.reduce(
-                  (acc: number, val: { rating: number }) => acc + val.rating,
-                  0,
-                ) / shopInfo.review.length}
+                {(
+                  isNaN(
+                    shopInfo.review.reduce(
+                      (acc: number, val: { rating: number }) =>
+                        acc + val.rating,
+                      0,
+                    ) / shopInfo.review.length,
+                  )
+                ) ?
+                  '-'
+                : shopInfo.review.reduce(
+                    (acc: number, val: { rating: number }) => acc + val.rating,
+                    0,
+                  ) / shopInfo.review.length
+                }
                 <Star className='h-5 w-5 fill-yellow-400 text-yellow-400' />
               </CardTitle>
             </CardHeader>

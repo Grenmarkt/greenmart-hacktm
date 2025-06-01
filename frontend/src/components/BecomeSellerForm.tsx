@@ -13,24 +13,25 @@ import {
 } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { AddressAutocomplete } from './AddressAutocomplete';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Numele este obligatoriu'),
   description: z.string().optional(),
-  mondayStartTime: z.string().min(1, 'Obligatoriu'),
-  mondayEndTime: z.string().min(1, 'Obligatoriu'),
-  tuesdayStartTime: z.string().min(1, 'Obligatoriu'),
-  tuesdayEndTime: z.string().min(1, 'Obligatoriu'),
-  wednesdayStartTime: z.string().min(1, 'Obligatoriu'),
-  wednesdayEndTime: z.string().min(1, 'Obligatoriu'),
-  thursdayStartTime: z.string().min(1, 'Obligatoriu'),
-  thursdayEndTime: z.string().min(1, 'Obligatoriu'),
-  fridayStartTime: z.string().min(1, 'Obligatoriu'),
-  fridayEndTime: z.string().min(1, 'Obligatoriu'),
-  saturdayStartTime: z.string().min(1, 'Obligatoriu'),
-  saturdayEndTime: z.string().min(1, 'Obligatoriu'),
-  sundayStartTime: z.string().min(1, 'Obligatoriu'),
-  sundayEndTime: z.string().min(1, 'Obligatoriu'),
+  luniStartTime: z.string().min(1, 'Obligatoriu'),
+  luniEndTime: z.string().min(1, 'Obligatoriu'),
+  martiStartTime: z.string().min(1, 'Obligatoriu'),
+  martiEndTime: z.string().min(1, 'Obligatoriu'),
+  miercuriStartTime: z.string().min(1, 'Obligatoriu'),
+  miercuriEndTime: z.string().min(1, 'Obligatoriu'),
+  joiStartTime: z.string().min(1, 'Obligatoriu'),
+  joiEndTime: z.string().min(1, 'Obligatoriu'),
+  vineriStartTime: z.string().min(1, 'Obligatoriu'),
+  vineriEndTime: z.string().min(1, 'Obligatoriu'),
+  sambataStartTime: z.string().min(1, 'Obligatoriu'),
+  sambataEndTime: z.string().min(1, 'Obligatoriu'),
+  duminicaStartTime: z.string().min(1, 'Obligatoriu'),
+  duminicaEndTime: z.string().min(1, 'Obligatoriu'),
   phone: z.string().min(1, 'Telefonul este obligatoriu'),
 });
 
@@ -38,28 +39,36 @@ export type BecomeSellerFormInput = z.infer<typeof formSchema>;
 
 type Props = {
   onSubmit: (data: BecomeSellerFormInput) => void;
+  setLocationData: React.Dispatch<
+    React.SetStateAction<{
+      latitude: number;
+      longitude: number;
+      city: string | null;
+      placeName: string;
+    } | null>
+  >;
 };
 
-export function BecomeSellerForm({ onSubmit }: Props) {
+export function BecomeSellerForm({ onSubmit, setLocationData }: Props) {
   const form = useForm<BecomeSellerFormInput>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       description: '',
-      mondayStartTime: '',
-      mondayEndTime: '',
-      tuesdayStartTime: '',
-      tuesdayEndTime: '',
-      wednesdayStartTime: '',
-      wednesdayEndTime: '',
-      thursdayStartTime: '',
-      thursdayEndTime: '',
-      fridayStartTime: '',
-      fridayEndTime: '',
-      saturdayStartTime: '',
-      saturdayEndTime: '',
-      sundayStartTime: '',
-      sundayEndTime: '',
+      luniStartTime: '',
+      luniEndTime: '',
+      martiStartTime: '',
+      martiEndTime: '',
+      miercuriStartTime: '',
+      miercuriEndTime: '',
+      joiStartTime: '',
+      joiEndTime: '',
+      vineriStartTime: '',
+      vineriEndTime: '',
+      sambataStartTime: '',
+      sambataEndTime: '',
+      duminicaStartTime: '',
+      duminicaEndTime: '',
       phone: '',
     },
   });
@@ -69,7 +78,13 @@ export function BecomeSellerForm({ onSubmit }: Props) {
       <CardHeader>
         <CardTitle className='text-2xl'>Date Magazin</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className='space-y-6'>
+        <AddressAutocomplete
+          mapboxToken='pk.eyJ1IjoidGFnZXN0dWRpbyIsImEiOiJjbTlrM3o5eXUwaWVjMmtzZ3ltcDAwazR6In0.tLphe6RSpLB4jbjdYuBg4g'
+          onSelect={(result) => {
+            setLocationData(result);
+          }}
+        />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
             {/* Nume magazin */}
@@ -124,7 +139,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
                 <span className='font-medium'>Luni</span>
                 <FormField
                   control={form.control}
-                  name='mondayStartTime'
+                  name='luniStartTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>De la</FormLabel>
@@ -142,7 +157,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
 
                 <FormField
                   control={form.control}
-                  name='mondayEndTime'
+                  name='luniEndTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>Până la</FormLabel>
@@ -164,7 +179,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
                 <span className='font-medium'>Marți</span>
                 <FormField
                   control={form.control}
-                  name='tuesdayStartTime'
+                  name='martiStartTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>De la</FormLabel>
@@ -182,7 +197,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
 
                 <FormField
                   control={form.control}
-                  name='tuesdayEndTime'
+                  name='martiEndTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>Până la</FormLabel>
@@ -204,7 +219,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
                 <span className='font-medium'>Miercuri</span>
                 <FormField
                   control={form.control}
-                  name='wednesdayStartTime'
+                  name='miercuriStartTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>De la</FormLabel>
@@ -222,7 +237,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
 
                 <FormField
                   control={form.control}
-                  name='wednesdayEndTime'
+                  name='miercuriEndTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>Până la</FormLabel>
@@ -244,7 +259,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
                 <span className='font-medium'>Joi</span>
                 <FormField
                   control={form.control}
-                  name='thursdayStartTime'
+                  name='joiStartTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>De la</FormLabel>
@@ -262,7 +277,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
 
                 <FormField
                   control={form.control}
-                  name='thursdayEndTime'
+                  name='joiEndTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>Până la</FormLabel>
@@ -284,7 +299,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
                 <span className='font-medium'>Vineri</span>
                 <FormField
                   control={form.control}
-                  name='fridayStartTime'
+                  name='vineriStartTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>De la</FormLabel>
@@ -302,7 +317,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
 
                 <FormField
                   control={form.control}
-                  name='fridayEndTime'
+                  name='vineriEndTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>Până la</FormLabel>
@@ -324,7 +339,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
                 <span className='font-medium'>Sâmbătă</span>
                 <FormField
                   control={form.control}
-                  name='saturdayStartTime'
+                  name='sambataStartTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>De la</FormLabel>
@@ -342,7 +357,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
 
                 <FormField
                   control={form.control}
-                  name='saturdayEndTime'
+                  name='sambataEndTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>Până la</FormLabel>
@@ -364,7 +379,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
                 <span className='font-medium'>Duminică</span>
                 <FormField
                   control={form.control}
-                  name='sundayStartTime'
+                  name='duminicaStartTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>De la</FormLabel>
@@ -382,7 +397,7 @@ export function BecomeSellerForm({ onSubmit }: Props) {
 
                 <FormField
                   control={form.control}
-                  name='sundayEndTime'
+                  name='duminicaEndTime'
                   render={({ field }) => (
                     <FormItem className='flex flex-col items-center'>
                       <FormLabel className=''>Până la</FormLabel>

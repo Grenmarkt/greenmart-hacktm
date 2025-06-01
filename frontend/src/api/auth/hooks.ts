@@ -31,7 +31,7 @@ export function useSignup() {
         queryKey: sessionQueryOptions.queryKey,
         exact: true,
       });
-      router.navigate({ to: '/protected' });
+      router.navigate({ to: '/' });
     },
   });
 }
@@ -45,7 +45,7 @@ export function useSignin() {
         queryKey: sessionQueryOptions.queryKey,
         exact: true,
       });
-      router.navigate({ to: '/protected' });
+      router.navigate({ to: '/' });
     },
     onError: () => {
       toast.error('Autentificare eșuată', {
@@ -64,7 +64,7 @@ export function useSignout() {
         queryKey: sessionQueryOptions.queryKey,
         exact: true,
       });
-      router.navigate({ to: '/' });
+      router.invalidate();
     },
   });
 }

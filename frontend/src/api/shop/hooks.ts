@@ -1,6 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { $fetch } from '@/lib/http/client';
 import { BecomeSellerInput } from '@/lib/http/models/seller';
+import { queryClient } from '../client';
+import { router } from '@/lib/router';
 
 export function useUpdateShopDescription() {
   return useMutation({
@@ -27,6 +29,10 @@ export function useBecomeSeller() {
   return useMutation({
     mutationKey: ['shop', 'create'] as const,
     mutationFn: (data: BecomeSellerInput) =>
-      $fetch('@post/api/seller/beSeller', { body: data }),
+      $fetch('@post/api/seller/becomeSeller', { body: data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shop'] });
+      router.navigate({ to: '/seller' });
+    },
   });
 }

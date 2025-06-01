@@ -14,6 +14,7 @@ export const createProductInputSchema = z.object({
 export const getProductsInputSchema = z.object({
   productType: z.string().optional(),
   city: z.string().optional(),
+  category: z.string().optional(),
 });
 
 export type GetProductsInput = z.infer<typeof getProductsInputSchema>;

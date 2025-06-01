@@ -55,6 +55,11 @@ export const becomeSellerInputSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   phone: z.string(),
+  city: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+  county: z.string(),
+  street: z.string(),
   workIntervals: z.array(
     z.object({
       day: z.string(),

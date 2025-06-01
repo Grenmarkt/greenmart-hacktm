@@ -5,7 +5,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 export const Route = createFileRoute('/signin')({
   beforeLoad: ({ context: { authData } }) => {
     if (authData) {
-      throw redirect({ to: '/protected' });
+      throw redirect({ to: '/' });
     }
   },
   component: RouteComponent,

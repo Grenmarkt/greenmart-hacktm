@@ -13,7 +13,6 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as SignupImport } from './routes/signup'
 import { Route as SigninImport } from './routes/signin'
-import { Route as ProtectedImport } from './routes/protected'
 import { Route as CreateProductImport } from './routes/create-product'
 import { Route as CartImport } from './routes/cart'
 import { Route as BecomeSellerImport } from './routes/become-seller'
@@ -35,12 +34,6 @@ const SignupRoute = SignupImport.update({
 const SigninRoute = SigninImport.update({
   id: '/signin',
   path: '/signin',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ProtectedRoute = ProtectedImport.update({
-  id: '/protected',
-  path: '/protected',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -130,13 +123,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CreateProductImport
       parentRoute: typeof rootRoute
     }
-    '/protected': {
-      id: '/protected'
-      path: '/protected'
-      fullPath: '/protected'
-      preLoaderRoute: typeof ProtectedImport
-      parentRoute: typeof rootRoute
-    }
     '/signin': {
       id: '/signin'
       path: '/signin'
@@ -196,7 +182,6 @@ export interface FileRoutesByFullPath {
   '/become-seller': typeof BecomeSellerRoute
   '/cart': typeof CartRoute
   '/create-product': typeof CreateProductRoute
-  '/protected': typeof ProtectedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/products/$productId': typeof ProductsProductIdRoute
@@ -211,7 +196,6 @@ export interface FileRoutesByTo {
   '/become-seller': typeof BecomeSellerRoute
   '/cart': typeof CartRoute
   '/create-product': typeof CreateProductRoute
-  '/protected': typeof ProtectedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/products/$productId': typeof ProductsProductIdRoute
@@ -227,7 +211,6 @@ export interface FileRoutesById {
   '/become-seller': typeof BecomeSellerRoute
   '/cart': typeof CartRoute
   '/create-product': typeof CreateProductRoute
-  '/protected': typeof ProtectedRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/products/$productId': typeof ProductsProductIdRoute
@@ -244,7 +227,6 @@ export interface FileRouteTypes {
     | '/become-seller'
     | '/cart'
     | '/create-product'
-    | '/protected'
     | '/signin'
     | '/signup'
     | '/products/$productId'
@@ -258,7 +240,6 @@ export interface FileRouteTypes {
     | '/become-seller'
     | '/cart'
     | '/create-product'
-    | '/protected'
     | '/signin'
     | '/signup'
     | '/products/$productId'
@@ -272,7 +253,6 @@ export interface FileRouteTypes {
     | '/become-seller'
     | '/cart'
     | '/create-product'
-    | '/protected'
     | '/signin'
     | '/signup'
     | '/products/$productId'
@@ -288,7 +268,6 @@ export interface RootRouteChildren {
   BecomeSellerRoute: typeof BecomeSellerRoute
   CartRoute: typeof CartRoute
   CreateProductRoute: typeof CreateProductRoute
-  ProtectedRoute: typeof ProtectedRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
@@ -303,7 +282,6 @@ const rootRouteChildren: RootRouteChildren = {
   BecomeSellerRoute: BecomeSellerRoute,
   CartRoute: CartRoute,
   CreateProductRoute: CreateProductRoute,
-  ProtectedRoute: ProtectedRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
@@ -327,7 +305,6 @@ export const routeTree = rootRoute
         "/become-seller",
         "/cart",
         "/create-product",
-        "/protected",
         "/signin",
         "/signup",
         "/products/$productId",
@@ -348,9 +325,6 @@ export const routeTree = rootRoute
     },
     "/create-product": {
       "filePath": "create-product.tsx"
-    },
-    "/protected": {
-      "filePath": "protected.tsx"
     },
     "/signin": {
       "filePath": "signin.tsx"

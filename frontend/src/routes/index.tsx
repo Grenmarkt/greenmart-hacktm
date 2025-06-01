@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useMatch, useNavigate } from '@tanstack/react-router';
 import heroImage from '../components/assets/hero-image.jpg';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
@@ -28,20 +28,50 @@ import {
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CategoryCard } from '@/components/CategoryCard';
+import legumeImg from '../components/assets/legume.jpg';
+import fructeImg from '../components/assets/fructe.jpg';
+import carneImg from '../components/assets/carne.jpg';
+import bauturiImg from '../components/assets/sucuri.jpg';
+import lactateImg from '../components/assets/lactate.jpg';
 
 export const Route = createFileRoute('/')({
+  beforeLoad: ({ context }) => ({ authData: context.authData }),
   component: RouteComponent,
 });
 
-const fruits = [
+const quickSearches = [
   {
-    label: 'Organic Tomato',
-    value: 'Organic Tomato',
+    title: 'Legume',
+    category: 'VEGETABLE',
+    img: legumeImg,
   },
   {
-    label: 'cartofi',
-    value: 'cartofi',
+    title: 'Fructe',
+    category: 'FRUIT',
+    img: fructeImg,
   },
+  {
+    title: 'Carne',
+    category: 'MEAT',
+    img: carneImg,
+  },
+  {
+    title: 'Lactate',
+    category: 'DAIRY',
+    img: lactateImg,
+  },
+  {
+    title: 'Bauturi',
+    category: 'BEVERAGE',
+    img: bauturiImg,
+  },
+];
+
+const products = [
+  { label: 'Mere', value: 'Mere' },
+  { label: 'Capsuni', value: 'Capsuri' },
+  { label: 'Rosii', value: 'Rosii' },
 ];
 
 const cities = [
@@ -58,12 +88,20 @@ const formSchema = z.object({
 
 function RouteComponent() {
   const navigate = useNavigate();
+
+  const match = useMatch({ from: '/' });
+  const authData = match.context.authData;
+
+  const isUser = !!authData?.user;
+  const isSeller = authData?.user.role === 'SELLER';
+
   const onSubmit = (data: Record<string, any>) => {
     navigate({
       to: '/products',
       search: {
         productType: data['productType'],
         city: data['city'],
+        category: 'Toate',
       },
     });
   };
@@ -78,7 +116,7 @@ function RouteComponent() {
 
   return (
     <div className='min-h-screen bg-gray-50'>
-      <Navbar />
+      <Navbar isSeller={isSeller} isUser={isUser} />
       <section
         className='bg-cover bg-center py-16'
         style={{
@@ -95,12 +133,12 @@ function RouteComponent() {
                       <form
                         onSubmit={form.handleSubmit(onSubmit)}
                         className='space-y-8'>
-                        <div className='flex w-full items-center justify-between'>
+                        <div className='flex w-full items-center gap-4'>
                           <FormField
                             control={form.control}
                             name='productType'
                             render={({ field }) => (
-                              <FormItem className='flex flex-col'>
+                              <FormItem className='flex flex-1 flex-col'>
                                 <FormLabel>Tipul produs</FormLabel>
                                 <Popover>
                                   <PopoverTrigger asChild>
@@ -109,21 +147,20 @@ function RouteComponent() {
                                         variant='outline'
                                         role='combobox'
                                         className={cn(
-                                          'w-[200px] justify-between',
+                                          'w-full justify-between',
                                           !field.value &&
                                             'text-muted-foreground',
                                         )}>
                                         {field.value ?
-                                          fruits.find(
-                                            (fruit) =>
-                                              fruit.value === field.value,
+                                          products.find(
+                                            (p) => p.value === field.value,
                                           )?.label
                                         : 'Alege tipul'}
                                         <ChevronsUpDown className='opacity-50' />
                                       </Button>
                                     </FormControl>
                                   </PopoverTrigger>
-                                  <PopoverContent className='w-[200px] p-0'>
+                                  <PopoverContent className='w-full p-0'>
                                     <Command>
                                       <CommandInput
                                         placeholder='Search framework...'
@@ -134,21 +171,24 @@ function RouteComponent() {
                                           Tipul nu a fost gasit
                                         </CommandEmpty>
                                         <CommandGroup>
-                                          {fruits.map((fruit) => (
+                                          {products.map((product) => (
                                             <CommandItem
-                                              value={fruit.label}
-                                              key={fruit.value}
+                                              value={product.label}
+                                              key={product.value}
                                               onSelect={() => {
                                                 form.setValue(
                                                   'productType',
-                                                  fruit.value,
+                                                  product.value,
                                                 );
                                               }}>
-                                              {fruit.label}
+                                              {product.label}
                                               <Check
                                                 className={cn(
                                                   'ml-auto',
-                                                  fruit.value === field.value ?
+                                                  (
+                                                    product.value ===
+                                                      field.value
+                                                  ) ?
                                                     'opacity-100'
                                                   : 'opacity-0',
                                                 )}
@@ -163,11 +203,12 @@ function RouteComponent() {
                               </FormItem>
                             )}
                           />
+
                           <FormField
                             control={form.control}
                             name='city'
                             render={({ field }) => (
-                              <FormItem className='flex flex-col'>
+                              <FormItem className='flex flex-1 flex-col'>
                                 <FormLabel>Oraș</FormLabel>
                                 <Popover>
                                   <PopoverTrigger asChild>
@@ -176,29 +217,28 @@ function RouteComponent() {
                                         variant='outline'
                                         role='combobox'
                                         className={cn(
-                                          'w-[200px] justify-between',
+                                          'w-full justify-between',
                                           !field.value &&
                                             'text-muted-foreground',
                                         )}>
                                         {field.value ?
                                           cities.find(
-                                            (city) =>
-                                              city.value === field.value,
+                                            (c) => c.value === field.value,
                                           )?.label
-                                        : 'Alege orasul'}
+                                        : 'Alege orașul'}
                                         <ChevronsUpDown className='opacity-50' />
                                       </Button>
                                     </FormControl>
                                   </PopoverTrigger>
-                                  <PopoverContent className='w-[200px] p-0'>
+                                  <PopoverContent className='w-full p-0'>
                                     <Command>
                                       <CommandInput
-                                        placeholder='Cauta un oraș...'
+                                        placeholder='Caută un oraș...'
                                         className='h-9'
                                       />
                                       <CommandList>
                                         <CommandEmpty>
-                                          Orașul nu a fost gasit
+                                          Orașul nu a fost găsit
                                         </CommandEmpty>
                                         <CommandGroup>
                                           {cities.map((city) => (
@@ -231,8 +271,8 @@ function RouteComponent() {
                             )}
                           />
 
-                          <Button size='lg' type='submit'>
-                            Cauta
+                          <Button size='lg' className='self-end'>
+                            Caută
                           </Button>
                         </div>
                       </form>
@@ -248,6 +288,19 @@ function RouteComponent() {
       {/* Main Content */}
       <main className='container mx-auto px-4 py-8'>
         {/* Categories Section */}
+        <div className='mt-10 space-y-8'>
+          <h2 className='text-3xl font-semibold'>Categorii Rapide</h2>
+          <div className='flex w-full flex-wrap items-center justify-center gap-8 md:justify-between'>
+            {quickSearches.map((quickSearch) => (
+              <CategoryCard
+                key={quickSearch.title}
+                title={quickSearch.title}
+                categoryValue={quickSearch.category}
+                imageSrc={quickSearch.img}
+              />
+            ))}
+          </div>
+        </div>
 
         {/* Products Section */}
         {/* <section>

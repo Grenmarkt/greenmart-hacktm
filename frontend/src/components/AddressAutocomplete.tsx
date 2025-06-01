@@ -139,7 +139,7 @@ export function AddressAutocomplete({
   return (
     <div ref={containerRef} className='relative w-full max-w-md'>
       <label htmlFor='address-autocomplete' className='mb-1 block font-medium'>
-        Introduceți adresa:
+        Adresa
       </label>
       <input
         id='address-autocomplete'
