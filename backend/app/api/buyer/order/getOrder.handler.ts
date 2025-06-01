@@ -14,6 +14,7 @@ export const getOrderProducts= async(
         }
     });
 
+
     const orderProducts = await Promise.all(order.map(async (order) => {
             return await prismaClient.orderProduct.findMany({
                 where: {
@@ -21,7 +22,12 @@ export const getOrderProducts= async(
                 },
                 include:
                 {
-                    product: true
+                    product: {
+                        include: {
+                            productType: true,
+                            shop: true
+                        }
+                    }
                 }
             });
         }));
