@@ -92,7 +92,7 @@ const mockReviews = [
 
 // Componenta pentru secțiunea de recenzii
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function ReviewsSection({ product }: { product: Product }) {
+function ReviewsSection({ }: { product: Product }) {
   const MOCK_REVIEW = 5;
   return (
     <div className='py-6'>
@@ -214,7 +214,7 @@ function RouteComponent() {
         <div>
           <div className='mb-4 h-96 w-full overflow-hidden rounded-lg bg-gray-100'>
             <img
-              src={product.imageUrl}
+              src={product.imageUrl ?? '/placeholder-image.jpg'}
               alt='Produs'
               className='h-full w-full object-cover'
             />

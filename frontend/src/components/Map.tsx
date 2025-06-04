@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react'; 
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -7,12 +7,14 @@ interface MapProps {
   products: Array<{
     id: string;
     title: string;
-    description: string;
-    imageUrl: string;
-    price: number;
+    description?: string | null;  // Optional
+    imageUrl?: string | null;     // Optional
+    price: number;      // Handle Prisma Decimal
     latitude: number;
     longitude: number;
-    // …any other fields you might have…
+    // Include other fields you need
+    stock?: number;
+    unitType?: string;
   }>;
   hoveredProduct: {
     id: string;

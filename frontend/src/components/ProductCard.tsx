@@ -22,7 +22,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <Link to={`/products/$productId`} params={{ productId: product['id'] }}>
         <div className='relative'>
           <img
-            src={product['imageUrl']}
+            src={product['imageUrl'] ?? ''}
             alt={product.title}
             className='h-48 w-full object-cover'
           />

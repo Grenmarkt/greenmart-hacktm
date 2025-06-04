@@ -129,7 +129,7 @@ function RouteComponent() {
                 <CardContent className='p-6'>
                   <div className='flex gap-4'>
                     <img
-                      src={item.product.imageUrl}
+                      src={item.product.imageUrl ?? ''}
                       alt={item.product.title}
                       className='h-24 w-24 rounded-lg object-cover'
                     />
