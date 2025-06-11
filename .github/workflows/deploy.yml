@@ -22,9 +22,12 @@ jobs:
 
       - name: Deploy app via SSH
         run: |
-          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
+            ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd ~/greenmart-hacktm
-            git pull origin master
+            export NVM_DIR="$HOME/.nvm"
+            source "$NVM_DIR/nvm.sh"
+            nvm install 24
+            nvm use 24
             npm install
             npm run setup
             npm run build
