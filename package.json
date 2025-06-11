@@ -7,7 +7,7 @@
   "type": "module",
   "private": "true",
   "scripts": {
-    "setup": "npm i && cd backend && npx prisma generate",
+    "setup": "cd backend && npx prisma generate",
     "backend": "npm run dev -w backend",
     "frontend": "npm run dev -w frontend",
     "start": "concurrently \"npm run backend\" \"npm run frontend\""

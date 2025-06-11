@@ -8,8 +8,8 @@ export const config = {
   cors: {
     origin:
       process.env['NODE_ENV'] === 'production' ?
-        'http://localhost:5173'
-      : 'http://localhost:5173',
+        'http://0.0.0.0:5173'
+      : 'http://0.0.0.0:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'] as string[],
     credentials: true,
   },
@@ -31,8 +31,8 @@ export const config = {
     options: {
       trustedOrigins: [
         process.env['NODE_ENV'] === 'production' ?
-          'http://localhost:5173'
-        : 'http://localhost:5173',
+          'http://0.0.0.0:5173'
+        : 'http://0.0.0.0:5173',
       ] as string[],
       emailAndPassword: {
         enabled: true,

@@ -19,7 +19,7 @@ import {
   registerProcessErrorHandlers,
 } from './middleware/errorHandlers.ts';
 import { createRouteHandler } from 'uploadthing/express';
-import { mediaUploadClient } from './utils/mediaUploadClient.ts';
+import { mediaUploadClient } from '../app/utils/mediaUploadClient.ts';
 
 const app = express();
 
@@ -47,6 +47,4 @@ app.use(errorHandler);
 registerProcessErrorHandlers(logger);
 
 const port = process.env['PORT'] ?? 3000;
-app.listen(port, () => {
-  logger.info(`App running on port ${port}...`);
-});
+app.listen(3000, '0.0.0.0');

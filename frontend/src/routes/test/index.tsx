@@ -27,5 +27,5 @@ function RouteComponent() {
 }
 
 const UploadButton = generateUploadButton<MediaUploadClient>({
-  url: 'http://localhost:3000/api/uploadthing',
+  url: 'http://0.0.0.0:3000/api/uploadthing',
 });
