@@ -22,14 +22,16 @@ jobs:
 
       - name: Deploy app via SSH
         run: |
-            ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
-            cd ~/greenmart-hacktm
-            export NVM_DIR="$HOME/.nvm"
-            source "$NVM_DIR/nvm.sh"
-            nvm install 24
-            nvm use 24
-            npm install
-            npm run setup
-            npm run build
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} 'bash -i -c "
+            cd ~/greenmart-hacktm &&
+            export NVM_DIR=\"$HOME/.nvm\" &&
+            source \"$NVM_DIR/nvm.sh\" &&
+            nvm install 24 &&
+            nvm use 24 &&
+            npm install &&
+            npm run setup &&
+            npm run build &&
             pm2 restart all || npm start
-          EOF
+          "'
+
+         EOF
