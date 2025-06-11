@@ -24,8 +24,9 @@ jobs:
         run: |
           ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd ~/greenmart-hacktm
-            git pull origin main
+            git pull origin master
             npm install
+            npm run setup
             npm run build
             pm2 restart all || npm start
           EOF
