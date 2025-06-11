@@ -20,19 +20,19 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-- name: Deploy app via SSH
-  run: |
-    ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} 'bash -i -c "
-      cd ~/greenmart-hacktm &&
-      export NVM_DIR=\$HOME/.nvm &&
-      source \$NVM_DIR/nvm.sh &&
-      nvm install 24 &&
-      nvm alias default 24 &&
-      nvm use default &&
-      node -v &&
-      npm install &&
-      npm run setup &&
-      npm run build &&
-      pm2 delete all || true &&
-      pm2 start npm --name \"greenmart\" -- run start
-    "'
+      - name: Deploy app via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} 'bash -i -c "
+            cd ~/greenmart-hacktm &&
+            export NVM_DIR=\$HOME/.nvm &&
+            source \$NVM_DIR/nvm.sh &&
+            nvm install 24 &&
+            nvm alias default 24 &&
+            nvm use default &&
+            node -v &&
+            npm install &&
+            npm run setup &&
+            npm run build &&
+            pm2 delete all || true &&
+            pm2 start npm --name \"greenmart\" -- run start
+          "'
