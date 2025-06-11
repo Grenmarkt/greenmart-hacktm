@@ -23,9 +23,9 @@ jobs:
       - name: Deploy app via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} 'bash -i -c "
-            cd ~/greenmart-hacktm &&
-            git reset --hard HEAD &&
-            git pull origin master &&
+            cd /home/${{ secrets.VPS_USERNAME }}/greenmart-hacktm &&
+            git fetch origin master &&
+            git reset --hard origin/master &&
             export NVM_DIR=\$HOME/.nvm &&
             source \$NVM_DIR/nvm.sh &&
             nvm install 24 &&
@@ -35,6 +35,5 @@ jobs:
             npm install &&
             npm run setup &&
             npm run build &&
-            pm2 delete all || true &&
-            pm2 start npm --name \"greenmart\" -- run start
+            pm2 restart greenmart || pm2 start npm --name \"greenmart\" -- run start
           "'
