@@ -26,8 +26,6 @@ jobs:
             cd ~/greenmart-hacktm &&
             git fetch origin master &&
             git reset --hard origin/master &&
-            export NVM_DIR=\$HOME/.nvm &&
-            source \$NVM_DIR/nvm.sh &&
             nvm install 24 &&
             nvm alias default 24 &&
             nvm use default &&
@@ -35,6 +33,6 @@ jobs:
             npm install &&
             npm run setup &&
             npm run build &&
-            pm2 delete greenmart || true &&
-            pm2 start npm --name \"greenmart\" -- run start
+            pm2 delete all &&
+            pm2 start npm --name \"greenmart\" -- start
           "'
