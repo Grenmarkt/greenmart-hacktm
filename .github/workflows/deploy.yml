@@ -32,7 +32,7 @@ jobs:
             node -v &&
             npm install &&
             npm run setup &&
-            npm frontend &&
+            cd frontend &&
             npm run build &&
             cd .. &&
             pm2 delete all &&
