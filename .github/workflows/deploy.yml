@@ -37,4 +37,6 @@ jobs:
             cd .. &&
             pm2 delete all &&
             pm2 start npm --name \"greenmart\" -- start
+            rm -rf /var/www/greenmart.ro/* &&
+            cp -r frontend/dist/* /var/www/greenmart.ro
           "'
