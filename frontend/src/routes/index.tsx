@@ -319,7 +319,7 @@ function RouteComponent() {
       <main className='container mx-auto px-4 py-8'>
         {/* Categories Section */}
         <div className='mt-10 space-y-8'>
-          <h2 className='text-3xl font-semibold'>Categorii Super Rapide</h2>
+          <h2 className='text-3xl font-semibold'>Categorii Rapide</h2>
           <div className='flex w-full flex-wrap items-center justify-center gap-8 md:justify-between'>
             {quickSearches.map((quickSearch) => (
               <CategoryCard
